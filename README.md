@@ -5,7 +5,7 @@ My first ever home server setup and installation notes. I don't know what I'm do
 
 ### Primary goal
 
-Create a small, low-power, always on Plex server, which will use the *arr suite to automate obtaining and organizing media, alongside Overseerr as a front-end to handle requests for media from the family. 
+Create a small, low-power, always-on Plex server, which will use the *arr suite to automate obtaining and organizing media, alongside Overseerr as a front-end to handle requests for media from the family. 
 
 ### Secondary goals
 
@@ -53,8 +53,8 @@ The arr suite automatically downloads and organizes your media. The ones I plan 
 - [Radarr](https://github.com/Radarr/Radarr): Manages your movie library
 - [Sonarr](https://github.com/Sonarr/Sonarr): Manages your TV library
 - [Lidarr](https://github.com/lidarr/Lidarr): Manages your music ilbrary
-- [Prowlarr](https://github.com/Prowlarr/Prowlarr) = index manager for *arrs
-- [Bazarr](https://www.bazarr.media) = subtitles companion app
+- [Prowlarr](https://github.com/Prowlarr/Prowlarr): Index manager for *arrs
+- [Bazarr](https://www.bazarr.media): Subtitles companion app
 - [Readarr](https://github.com/Readarr/Readarr): Book, Magazine, Comics Ebook and Audiobook Manager and Automation
 
 I also plan to use [Overseerr](https://overseerr.dev) as a front-end to handle discovery and requests for new media for the family. Overseer integrates with the arr suite.
@@ -65,7 +65,7 @@ I also plan to use [Overseerr](https://overseerr.dev) as a front-end to handle d
 - https://youtu.be/p6aSlcbDHqc - youtube videos that detail installing and setting up Plex as a Ubuntu VM. Uses TrueNAS as the NAS, which is overkill for my setup, but the principle should be similar (i.e., create a SMB/CIFS share Media <-> Plex)
 - https://tteck.github.io/Proxmox/ - for homebridge (automation/homebridge) and any other LXCs that have convenient setup scripts (e.g., secondary pi-hole LXC is an option)
 
-## Confusion
+## Confusion tracker
 
 - You can also install Plex and various docker containers directly with the NAS OSs such as directly inside of Unraid, or OMV. In my case I want to keep Plex separate from the data, but it's extremely confusing when reading setup guides. 
 - What should be in a VM vs., LXC? As far as I understand and LXC is a container, and would be less resource intensive as a VM, which is a virtualized computer. For small, self-contained things like HomeBridge, an LXC makes sense. Plex can live in an LXC, but the Arr containers seem to be better suited to a VM. For now, I plan to have Plex  + Arr together all inside a Ubuntu VM.
