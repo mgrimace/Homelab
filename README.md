@@ -17,7 +17,7 @@ Micro Lenovo M920Q, I7-8700T, 16gb RAM, 512GB NVME (main), 2TB 2.5" SSD (media)
 
 Using Proxmox, the main NVME will host various Virtual Machines (VMs), and Linux Containers (LXCs). One VM in particular will function as a network accessible storage (NAS) operating system (OS) to share the second attached SSD media drive to the VMs and over the network. 
 
-NVME  (main drive)
+### NVME - main drive
 
 - Proxmox as the main 'OS' - it manages the virtualization: https://www.proxmox.com/en/
   - VM1: Open-media vault or Unraid (to share the second SSD media drive as a NAS and to the other VMs) 
@@ -30,7 +30,10 @@ NVME  (main drive)
   - VM4 (?): Something to run python scripts and bots, maybe a light ubuntu or dietpi or something small 
   - VM5 (?): minecraft server  
 
-SSD - media storage for NAS, Plex, and Calibre 
+### SSD - media storage
+
+- This drive will primarily serve as network accessible storage for media for Plex and Calibre 
+- The file structure will be organized for hardlinking, following: https://trash-guides.info/Hardlinks/Hardlinks-and-Instant-Moves/
 
 ### Setup Guides and resources
 
