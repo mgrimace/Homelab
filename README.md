@@ -7,7 +7,7 @@ My primary goal is to create a small, low-power, always on Plex server, which wi
 
 ### A note on documentation
 
-I intend to use this project to learn how to create a home server, learn Proxmox, virtualization, networking, and all the other fun things that come along with it. I am comfortable using SSH and the command line, and I have set up some small Raspberry Pi home projects previously (i.e., PiHole, homebridge using docker containers). This readme will serve as my collection of my notes, resources, and step-by-step instructions. 
+I intend to use this project to learn how to create a home server, learn Proxmox, virtualization, networking, and all the other fun things that come along with it. I am comfortable using SSH and the command line, and I have set up some small Raspberry Pi home projects [previously](https://github.com/mgrimace/PiHole-Wireguard-and-Homebridge-on-Raspberry-Pi-Zero-2) (i.e., PiHole, homebridge using docker containers). This readme will serve as my collection of my notes, resources, and step-by-step instructions. 
 
 ## The hardware
 
