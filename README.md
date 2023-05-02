@@ -44,7 +44,7 @@ Using Proxmox, the main NVME will host various Virtual Machines (VMs), and Linux
 - This drive will primarily serve as network accessible storage for media for Plex and Calibre 
 - The file structure will be organized for hardlinking, following: https://trash-guides.info/Hardlinks/Hardlinks-and-Instant-Moves/
 
-### Setup Guides and resources
+## Setup Guides and resources
 
 ### Arrs 
 
@@ -64,6 +64,13 @@ I also plan to use [Overseerr](https://overseerr.dev) as a front-end to handle d
 - https://trash-guides.info - details the setup of the various *arr services, as well as hard linking. Hard linking reduces wear and tear on the media drive. 
 - https://youtu.be/p6aSlcbDHqc - youtube videos that detail installing and setting up Plex as a Ubuntu VM. Uses TrueNAS as the NAS, which is overkill for my setup, but the principle should be similar (i.e., create a SMB/CIFS share Media <-> Plex)
 - https://tteck.github.io/Proxmox/ - for homebridge (automation/homebridge) and any other LXCs that have convenient setup scripts (e.g., secondary pi-hole LXC is an option)
+
+### Cool things to try
+
+- [Homepage](https://gethomepage.dev/en/installation/) - a nice visual dashboard of all the things that are running, e.g., proxmox stats, downloads, etc. 
+- Free game scraping bots (running on a light VM):
+  - Epic: https://github.com/claabs/epicgames-freegames-node
+  - Steam: https://github.com/JustArchiNET/ArchiSteamFarm + this plugin: https://github.com/maxisoft/ASFFreeGames
 
 ## Confusion tracker
 
