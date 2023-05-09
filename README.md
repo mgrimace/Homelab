@@ -8,8 +8,8 @@ My first ever home server setup and installation notes. I don't know what I'm do
 1. [Overview](##Overview])
 2. [Hardware installation](Hardware.md/#Hardware)
 3. [Proxmox installation and setup](Proxmox.md/#Proxmox)
-4. [Open Media Vault installation and setup](Open Media Vault.md/#Open-Media-Vault)
-5. [Create a Ubuntu virtual machine with Plex](Ubuntu VM with Plex.md#Ubuntu VM with Plex)
+4. [Open Media Vault installation and setup](OMV.md)
+5. [Create a Ubuntu virtual machine with Plex](UbuntuVM.md)
 6. *Setup plex - coming soon*
 7. *Setup other stuff - coming soon*
 
