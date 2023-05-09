@@ -84,8 +84,13 @@ Go back to the console, and note your OMV IP address! Mine is `192.168.0.125`
 We're going to structure the filesystem based on Trash [Guide](https://trash-guides.info/Hardlinks/How-to-setup-for/Native/)
 
 - Go to storage, shared folders, and create a new share. Name it `data`.
-- https://www.techrepublic.com/article/create-network-share-openmediavault/
+- Go to services, SMB/CIFS, and create a new SMB share, selecting the `data` folder. 
 
-Create users
+### Create users
 
-https://www.techrepublic.com/article/add-users-groups-openmediavault/
+Following this [guide](https://www.techrepublic.com/article/add-users-groups-openmediavault/). 
+
+- Go to Users, Users, the hit the plus symbol to create a user. Give them a name, email, and password, then create.
+
+- Go back to the user page, then select your new user click `shared folder permissions` to give the user access to your new shared folder
+
