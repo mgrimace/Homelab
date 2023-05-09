@@ -1,5 +1,19 @@
 # Homelab
-My first ever home server setup and installation notes. I don't know what I'm doing. No one should follow these steps under any circumstances. Please feel free to contribute suggestions and advice!
+My first ever home server setup and installation notes. I don't know what I'm doing. No one should follow these steps under any circumstances. Please feel free to contribute suggestions and advice.
+
+**NB:** This is a work in progress
+
+## Table of contents
+
+1. [Overview](##Overview])
+2. [Hardware installation](Hardware.md/#Hardware)
+3. [Proxmox installation and setup](Proxmox.md/#Proxmox)
+4. [Open Media Vault installation and setup](Open Media Vault.md/#Open Media Vault)
+5. *Create a Ubuntu VM - coming soon*
+6. *Setup plex - coming soon*
+7. *Setup other stuff - coming soon*
+
+# Overview
 
 ## Goals
 
@@ -68,7 +82,7 @@ I also plan to use [Overseerr](https://overseerr.dev) as a front-end to handle d
 ### Cool things to try
 
 - [Homepage](https://gethomepage.dev/en/installation/) - a nice visual dashboard of all the things that are running, e.g., proxmox stats, downloads, etc. 
-- Free game scraping bots (running on a light VM):
+- Free game scraping bots (likely running together on a light VM):
   - Epic: https://github.com/claabs/epicgames-freegames-node
   - Steam: https://github.com/JustArchiNET/ArchiSteamFarm + this plugin: https://github.com/maxisoft/ASFFreeGames
 
