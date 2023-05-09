@@ -8,8 +8,8 @@ My first ever home server setup and installation notes. I don't know what I'm do
 1. [Overview](##Overview])
 2. [Hardware installation](Hardware.md/#Hardware)
 3. [Proxmox installation and setup](Proxmox.md/#Proxmox)
-4. [Open Media Vault installation and setup](Open Media Vault.md/#Open Media Vault)
-5. *Create a Ubuntu VM - coming soon*
+4. [Open Media Vault installation and setup](Open Media Vault.md/#Open-Media-Vault)
+5. [Create a Ubuntu virtual machine with Plex](Ubuntu VM with Plex.md#Ubuntu VM with Plex)
 6. *Setup plex - coming soon*
 7. *Setup other stuff - coming soon*
 
@@ -85,11 +85,6 @@ I also plan to use [Overseerr](https://overseerr.dev) as a front-end to handle d
 - Free game scraping bots (likely running together on a light VM):
   - Epic: https://github.com/claabs/epicgames-freegames-node
   - Steam: https://github.com/JustArchiNET/ArchiSteamFarm + this plugin: https://github.com/maxisoft/ASFFreeGames
-
-## Confusion tracker
-
-- You can also install Plex and various docker containers directly with the NAS OSs such as directly inside of Unraid, or OMV. In my case I want to keep Plex separate from the data, but it's extremely confusing when reading setup guides. 
-- What should be in a VM vs., LXC? As far as I understand and LXC is a container, and would be less resource intensive as a VM, which is a virtualized computer. For small, self-contained things like HomeBridge, an LXC makes sense. Plex can live in an LXC, but the Arr containers seem to be better suited to a VM. For now, I plan to have Plex  + Arr together all inside a Ubuntu VM.
 
 
 
