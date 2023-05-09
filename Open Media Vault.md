@@ -73,6 +73,13 @@ Go back to the console, and note your OMV IP address! Mine is `192.168.0.125`
   - I kept getting the new upgrade 'held back' in the web console, so I had to go to the command console (in proxmox), log in using `root` and password from the install, then use the command `omv-upgrade` 
 - Toggle dark mode by clicking the user icon after the update.
 
+### Set a static IP in OMV
+
+- Go to system, network, and select your network connection
+- Under IPv4, change the method from `DHCP` to `Static` in the dropdown, enter the current IP that you use to access OMV.
+- Enter the netmask (mine is 255.255.255.0)
+- Enter the gateway (mine is 192.168.0.1)
+
 ### Create a new filesystem
 
 - Go to storage, File Systems, select + and create a new filesystem
@@ -98,7 +105,14 @@ Following this [guide](https://www.techrepublic.com/article/add-users-groups-ope
 
 ### Access the NAS storage share on your computer
 
-On a Mac, open Finder, the select `go` from the menubar, and `connect to server`, then input smb://OMV-IP-ADDRESS. It should ask for credentials for the user you created above.
+On a Mac, open Finder, the select `go` from the menubar, and `connect to server`, then input smb://OMV-IP-ADDRESS. It should ask for credentials for the user you created above. It will appear in finder and on your sidebar under `locations`
 
 ## Link storage to proxmox
 
+- Go back to your proxmox webUI, and select datacenter, storage, add new storage
+- Select SMB/CIFS
+- ID: give it a name (I called mine `vdisk-nas`)
+- Server: use the IP address of your OMV server
+- Username/Password: add your OMV username/password (that you generated for the share above). 
+  - Note if you used keychain to remember the password, don't let it fill in your email, just the username.
+- Then it should scan the share, and you can select `data` from share
