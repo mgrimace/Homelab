@@ -10,7 +10,7 @@ Here's the settings I used for the OMV virtual machine
 | General                                                      | OS                                        | System             | Disks                                                | CPU                                                          |
 | ------------------------------------------------------------ | ----------------------------------------- | ------------------ | ---------------------------------------------------- | ------------------------------------------------------------ |
 | **name:** omv-nas (or any name that suits you)               | Select the OMV iso you downlaoded earlier | Check `QEMU agent` | Set a disk size of 8GiB for the OMV operating system | **Number of cores:** `2` , select the type as `host` from the dropdown list |
-| **advanced:** start/shutdown order: `1`, startup delay `60` * |                                           |                    | Check `ssd emulation`                                | **Memory:** `4096`, uncheck ballooning                       |
+| **advanced:** start/shutdown order: `1`, startup delay `60` *, check `start at boot` |                                           |                    | Check `ssd emulation`                                | **Memory:** `4096`, uncheck ballooning                       |
 
 **This ensures that the NAS starts first and makes the shares available before the other VMs (e.g., Plex) start*
 
