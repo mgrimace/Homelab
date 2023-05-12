@@ -22,9 +22,19 @@ Do this for each.
 
 Then in Plex, make sure you add these folders, e.g., movies monitor both movies and movies4k so all those movies all show up together.
 
-Optional: setup qualitfy profiles to make sure the right files are grabbed for your system - https://trash-guides.info/Radarr/
+Setup qualitfy profiles to make sure the quality is appropriate for the files are grabbed for your system - https://trash-guides.info/Radarr/
 
-Optional: Link the libraries of the regular and 4k versions of Sonarr and Radarr (I'm using option 2 to occassionaly request 4k versions of things) - https://trash-guides.info/Radarr/Tips/Sync-2-radarr-sonarr/ 
+Setup naming schemes
+
+Setup custom profiles to make the right filetypes are grabbed (and avoided) for your system (same link as above)
+
+I'm going to use the following profile for most 720/1080p content https://trash-guides.info/Radarr/radarr-setup-quality-profiles/#trash-quality-profiles . Within this profile, it directs you which custom profiles to setup as well. Also making sure I setup the 'unwanted' custom formats.
+
+I also merged qualities: https://trash-guides.info/Radarr/Tips/Merge-quality/
+
+Repeat for each Arr
+
+Optional: Link the libraries of the regular and 4k versions of Sonarr and Radarr (I'm using option 2 to occassionaly request 4k versions of things) - https://trash-guides.info/Radarr/Tips/Sync-2-radarr-sonarr/ - I've decided not to do this, as I will be using overseer to handle requests and it gives me the option to 'download in 4k' if I setup radarr 4k separately (rather than using radar non-4k to handle and sync things)
 
 ## Setup overseer for requests
 
