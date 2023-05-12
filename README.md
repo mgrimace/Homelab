@@ -10,9 +10,8 @@ My first ever home server setup and installation notes. I don't know what I'm do
 3. [Proxmox installation and setup](Proxmox.md/#Proxmox)
 4. [Open Media Vault installation and setup](OMV.md)
 5. [Create Plex and Arr LXC containers](PlexLXC.md)
-6. Alternative: [Create a Ubuntu virtual machine with Plex](UbuntuVM.md)
-7. *Setup plex - coming soon*
-8. *Setup other stuff - coming soon*
+6. [Setup the Arrs for organizing media](Arrs.md)
+7. Alternative: [Create a Ubuntu virtual machine with Plex](UbuntuVM.md)
 
 # Overview
 

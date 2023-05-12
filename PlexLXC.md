@@ -17,7 +17,7 @@ In principle, I'm following this [guide](https://youtu.be/SP2ZCDiQrvU) for setti
 - Don't start automatically, go to otions, start at boot, and change the start order to run after your vm
 - Go to features, and enable nesting, NFS, and cifs/smb
 
-## Pass through the iGPU to the Plex container for hardware transcoding 
+## Pass through the iGPU to the Plex container for hardware transcoding (step 1, on proxmox)
 
 To pass through hardware transcoding, go back to your node (proxmox), select >_Shell, `nano etc/pve/lxc/mycontainer#.conf` and add the lines
 
@@ -57,7 +57,7 @@ Use ibramenu to go to media players, and install plex
 
 note the output for plex's address
 
-### Pass through iGPU in docker compose file (? not working presently)
+### Pass through iGPU in docker compose file (step 2, on LXC)
 
 We'll need to add the following line to our docker compose file
 
@@ -68,11 +68,18 @@ We'll need to add the following line to our docker compose file
 
 ![img](https://cdn.discordapp.com/attachments/946314371796172820/1105872377482584074/image.png)
 
-Exit the ibramenu, and go to cd /opt/appdata/plex
+- Exit the ibramenu, and go to cd /opt/appdata/plex
+- nano compose.yaml
+- paste that line under volumes
+- save and exit, then run:
 
-nano compose.yaml
-
-paste that line under volumes
+```bash
+sudo usermod -a -G video root
+chmod -R 777 /dev/dri
+docker exec plex apt-get -y update
+docker exec plex apt-get -y install i965-va-driver vainfo
+docker restart plex
+```
 
 ## Setup Arrs and qbittorrent
 
@@ -84,4 +91,6 @@ paste that line under volumes
 
 - Mount your share on your own computer, and start setting up the file structure per trash guide
 - add whatever foldres (I added tv4k and movies4k and tv-anime)
+
+
 
