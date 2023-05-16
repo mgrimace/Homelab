@@ -114,7 +114,19 @@ wget #add link to the latest .dll release from https://github.com/maxisoft/ASFFr
 sudo reboot
 ```
 
-### Epic game claimer
+## Homepage
+
+Install the LXC image from your node shell using
+
+```bash
+bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/homepage.sh)"
+```
+
+Configuration [guide](https://gethomepage.dev/en/configs/services/), and configs (bookmarks.yaml, services.yaml, widgets.yaml) path: `/opt/homepage/config/`
+
+Homepage Interface: IP:3000
+
+## Epic game claimer
 
 add instuctions here for an LXC for this
 

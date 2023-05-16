@@ -36,6 +36,8 @@ Repeat for each Arr
 
 Optional: Link the libraries of the regular and 4k versions of Sonarr and Radarr (I'm using option 2 to occassionaly request 4k versions of things) - https://trash-guides.info/Radarr/Tips/Sync-2-radarr-sonarr/ - I've decided not to do this, as I will be using overseer to handle requests and it gives me the option to 'download in 4k' if I setup radarr 4k separately (rather than using radar non-4k to handle and sync things)
 
+make sure 'unmonitor' is checked in media settings so that when shows are deleted you don't automatically download them again.
+
 ## Setup overseer for requests
 
 Launch the overseerr webUI, add your Arrs, set both the regular and 4k versions as 'default' and select the quality profiles that will be used automatically. I'm setting up a second user for my family to request
