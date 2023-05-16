@@ -1,8 +1,12 @@
 # Other LXCs
 
-[TOC]
+## Table of contents
 
-
+1. [Homebridge](#Homebridge)
+2. [Ubuntu](#Ubuntu)
+3. [ArchiSteamFarm](#ArchiSteamFarm)
+4. [Homepage.dev](#Homepage)
+5. ...in progress
 
 ## Homebridge
 
@@ -14,7 +18,9 @@ bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/homebridge.s
 
 remember to set a static IP for the LXC in proxmox
 
-## Ubuntu in an LXC (for scripts, etc)
+## Ubuntu 
+
+Create Ubuntu in an LXC (for scripts, etc):
 
 ```bash
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/ubuntu.sh)"
@@ -24,7 +30,7 @@ remember to set a static IP for the LXC in proxmox
 
 If you're installing multiple Ubuntu LXCs (for various projects), use the DNS, hostname option to change the name of the container
 
-### ArchisteamFarm
+## ArchisteamFarm
 
 Login in to your new Ubuntu LXC, and create a new user called asf
 
@@ -116,7 +122,7 @@ sudo reboot
 
 ## Homepage
 
-Install the LXC image from your node shell using
+Homepage is a neat Dashboard where you can link all your various containers and services on one handy page. Install the LXC image from your node >_shell using:
 
 ```bash
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/homepage.sh)"
