@@ -44,7 +44,7 @@ Using Proxmox, the main NVME will host various Virtual Machines (VMs), and Linux
 
 - Proxmox as the main 'OS' - it manages the virtualization: https://www.proxmox.com/en/
   - VM1: Open-media vault or Unraid (to share the second SSD media drive as a NAS and to the other VMs) 
-  - VM2: ubuntu with Plex + the various 'arr' softwares in containers
+  - VM2: ubuntu with Plex + the various 'arr' softwares in containers (note I ended up using separate LXCs for both, using ibramenu)
     - Dockstarter seems to be an easy way to set up the required software: https://dockstarter.com
     - Ibramenu is a potential alternative, which seems to have a focus on Plex in particular and may be better integrated (e.g., setup and integrated properly with hardlinks and trash guides, see below): https://ibramenu.io/
   - VM3 or LXC: Calibre (ebook) server for our various Kindles/Kobos 

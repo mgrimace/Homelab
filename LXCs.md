@@ -6,7 +6,7 @@
 2. [Ubuntu](#Ubuntu)
 3. [ArchiSteamFarm](#ArchiSteamFarm)
 4. [Homepage.dev](#Homepage)
-5. ...in progress
+5. [Pihole and Pihole sync](#pihole)
 
 ## Homebridge
 
@@ -116,7 +116,7 @@ We need to make config files, and the easiest way to do this is to use the ASF c
 ```bash
 su - asf
 cd ArchiSteamFarm/plugins
-wget #add link to the latest .dll release from https://github.com/maxisoft/ASFFreeGames
+wget https://github.com/maxisoft/ASFFreeGameshttps://github.com/maxisoft/ASFFreeGames #be sure to update with the latest .dll release 
 sudo reboot
 ```
 
@@ -128,13 +128,46 @@ Homepage is a neat Dashboard where you can link all your various containers and 
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/homepage.sh)"
 ```
 
-Configuration [guide](https://gethomepage.dev/en/configs/services/), and configs (bookmarks.yaml, services.yaml, widgets.yaml) path: `/opt/homepage/config/`
+- Configuration [guide](https://gethomepage.dev/en/configs/services/), and configs (bookmarks.yaml, services.yaml, widgets.yaml) path: `/opt/homepage/config/`
 
-Homepage Interface: IP:3000
+- Homepage Interface: IP:3000
 
-## Epic game claimer
+#### Mounting the shared drive
 
-add instuctions here for an LXC for this
+*this will require your to first backup and restore the container to make it privileged*
 
+- Mount the CIFS/SMB shared drive to show storage in Homepage
 
+- use the >_console for homepage, and edit the fstab file: `nano /etc/fstab`
 
+- I added the following:
+
+- ```bash
+  # Mount OMV media share
+  //[OMV IP address]/data /mnt/media cifs user=[username],pass=[pass],uid=1000,gid=1000,noperm 0 0
+  ```
+
+- Save, then install CIFS `sudo apt-get install cifs-utils`
+
+- Reboot
+
+## Pihole
+
+- install the PiHole LXC via the proxmox >_shell terminal `bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/pihole.sh)"` - use advance settings and set a root password, static IP, and enable root SSH
+- reboot the LXC
+- Then run `pihole -a -p` to set a password.
+- Pihole admin is found via IP/admin
+
+### Setup gravity sync
+
+Since this is my secondary PiHole (my first lives on separate hardware), I want to install gravity sync to keep them both identical.
+
+#### on both pihole systems
+
+- Run `curl -sSL https://raw.githubusercontent.com/vmstan/gs-install/main/gs-install.sh | bash` and go through the setup
+- You'll need your user passwords for both instances
+- afterwards, run `gravity-sync push` on the local machine that you want to send to the other, remote machine
+- If you need to remove the ssh connection details of the remote (e.g., something went wrong), you can run `ssh-keygen -f "/home/pi/.ssh/known_hosts" -R "[remoteIP]"` This assumes that your local user is called `pi`
+- You can reset your config file by re-running `gravity-sync config` 
+
+Alternatively, run cloudblock on a basic debian or ubuntu LXC?
