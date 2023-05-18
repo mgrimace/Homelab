@@ -167,7 +167,40 @@ Since this is my secondary PiHole (my first lives on separate hardware), I want 
 - Run `curl -sSL https://raw.githubusercontent.com/vmstan/gs-install/main/gs-install.sh | bash` and go through the setup
 - You'll need your user passwords for both instances
 - afterwards, run `gravity-sync push` on the local machine that you want to send to the other, remote machine
-- If you need to remove the ssh connection details of the remote (e.g., something went wrong), you can run `ssh-keygen -f "/home/pi/.ssh/known_hosts" -R "[remoteIP]"` This assumes that your local user is called `pi`
+- If you need to remove the ssh connection details of the remote (e.g., something went wrong), you can run `ssh-keygen -f "/home/pi/.ssh/known_hosts" -R "[remoteIP]"` This assumes that your local user is called `pi`. On the proxmox lxc use `ssh-keygen -R [remoteIP]` instead.
 - You can reset your config file by re-running `gravity-sync config` 
 
-Alternatively, run cloudblock on a basic debian or ubuntu LXC?
+#### Troubleshooting remote not detected error on LXC
+
+on the local machine, go to `cd /etc/gravity-sync`, `nano gravity-sync.rsa.pub` and copy the public address. On the remote machine, go to `~/.ssh`, `nano authorized_keys`, and paste the public key into this file. Then reset the config on the lxc using gravity-sync config. It should now connect. 
+
+## Alt: Running cloudblock on a Debian LXC (not working at present)
+
+create a Ubuntu LXC using: `bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/ubuntu.sh)"` use advanced settings, and select 6gb hd, 1024 ram, root password, enable root ssh.
+
+First, let's create a user called *pi*, `adduser pi`, give them a password, and give them sudo privileges `usermod -aG sudo pi`
+
+Switch to the pi user `su pi` 
+
+Install some dependencies
+
+```bash
+# Ansible + Git
+sudo apt update && sudo apt -y upgrade
+sudo apt install git python3-pip
+pip3 install --user --upgrade ansible
+
+# Add .local/bin to $PATH
+echo PATH="\$PATH:~/.local/bin" >> .bashrc
+source ~/.bashrc
+
+# Install the community ansible collection
+ansible-galaxy collection install community.general
+```
+
+We should be able to follow the ubuntu deployment here https://github.com/chadgeary/cloudblock/tree/master/playbooks#ubuntu-deployment
+
+```bash
+ansible-playbook cloudblock_amd64.yml --extra-vars="doh_provider=$doh_provider dns_novpn=$dns_novpn wireguard_peers=$wireguard_peers vpn_traffic=$vpn_traffic docker_network=$docker_network docker_gw=$docker_gw docker_doh=$docker_doh docker_pihole=$docker_pihole docker_wireguard=$docker_wireguard docker_webproxy=$docker_webproxy wireguard_network=$wireguard_network wireguard_hostname=$wireguard_hostname"
+```
+
