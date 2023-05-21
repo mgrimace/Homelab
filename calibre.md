@@ -28,6 +28,8 @@ password=[your password] #type it in as-is, without the []
 
 Reboot
 
+### Install Calibre and Calibre-Web via Docker
+
 install docker apt install docker.io && apt install docker-compose
 
 cd /opt/ mkdir appdata && cd appdata, mkdir calibre && cd calibre, mkdir calibre-web
@@ -54,13 +56,14 @@ services:
       - ebooks
 
   calibre-web:
-    image: ghcr.io/linuxserver/calibre-web
+    image: lscr.io/linuxserver/calibre-web:latest
     container_name: calibre-web
     environment:
       - PUID=1000
       - PGID=1000
     volumes:
       - /opt/appdata/calibre/calibre-web:/config
+      - /opt/appdata/custom-scripts/calibre-web/custom-cont-init.d:/custom-cont-init.d
       - /mnt/media/media/books:/books
     restart: unless-stopped
     depends_on:
@@ -76,6 +79,24 @@ networks:
 ```
 
 Create your ebooks docker network: `docker network create ebooks`
+
+#### Create a patch file to prevent a constant login annoyance in Calibre-web
+
+navigate to `cd /opt/appdata` then `mkdir custom-scripts/calibre-web/custom-cont-init.d`, navigate to this new directory, `cd custom-scripts/calibre-web/custom-cont-init.d`
+
+Create a new patch file `nano patch-session-protection.sh` and paste the following:
+
+```bash
+#!/bin/bash
+
+echo "**** patching calibre-web - removing session protection ****"
+
+sed -i "/lm.session_protection = 'strong'/d" /app/calibre-web/cps/__init__.py
+sed -i "/if not ub.check_user_session(current_user.id, flask_session.get('_id')) and 'opds' not in request.path:/d" /app/calibre-web/cps/admin.py
+sed -i "/logout_user()/d" /app/calibre-web/cps/admin.py
+```
+
+### Start Calibre and Calibre-Web
 
 Install and start Calibre and Calibre-Web `docker-compose up -d `
 
@@ -104,6 +125,10 @@ setup automatic uploads, and users
 use admin, admin123 as default login
 
 add the library by finding the folder called 'books', which we defined as `/mnt/media/media/books`, you should see Calibre Library in there. Select it and let it load up the books!
+
+### sync read status between calibre-web and calibre
+
+if you've already marked books as 'read' in your Calibre library, go to admin/ui configuration and select 'link read/unread status to calibre column' 
 
 if you made it this far, **backup your container now**, this was an enormous pain to get here with a lot of trial and error.
 
