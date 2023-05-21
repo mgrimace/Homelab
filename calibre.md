@@ -130,6 +130,10 @@ add the library by finding the folder called 'books', which we defined as `/mnt/
 
 if you've already marked books as 'read' in your Calibre library, go to admin/ui configuration and select 'link read/unread status to calibre column' 
 
+#### Hide books with certain tags
+
+I don't want all the kids books showing up in my library, go to settings, edit users, denied tags, and add `kids`. Then tag any kids book with the `kids` tag. On the other hand, I *only* want kids accounts to see kids books, so I'd add the `kids` tags to the `allowed tags` column for any of their accounts
+
 if you made it this far, **backup your container now**, this was an enormous pain to get here with a lot of trial and error.
 
 ---
