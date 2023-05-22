@@ -5,7 +5,6 @@
 1. [Homebridge](#Homebridge)
 2. [Ubuntu](#Ubuntu)
 3. [ArchiSteamFarm](#ArchiSteamFarm)
-4. [Homepage.dev](#Homepage)
 5. [Pihole and Pihole sync](#pihole)
 
 ## Homebridge
@@ -119,37 +118,6 @@ cd ArchiSteamFarm/plugins
 wget https://github.com/maxisoft/ASFFreeGameshttps://github.com/maxisoft/ASFFreeGames #be sure to update with the latest .dll release 
 sudo reboot
 ```
-
-## Homepage
-
-Homepage is a neat Dashboard where you can link all your various containers and services on one handy page. Install the LXC image from your node >_shell using:
-
-```bash
-bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/homepage.sh)"
-```
-
-- Configuration [guide](https://gethomepage.dev/en/configs/services/), and configs (bookmarks.yaml, services.yaml, widgets.yaml) path: `/opt/homepage/config/`
-
-- Homepage Interface: IP:3000
-
-#### Mounting the shared drive
-
-*this will require your to first backup and restore the container to make it privileged*
-
-- Mount the CIFS/SMB shared drive to show storage in Homepage
-
-- use the >_console for homepage, and edit the fstab file: `nano /etc/fstab`
-
-- I added the following:
-
-- ```bash
-  # Mount OMV media share
-  //[OMV IP address]/data /mnt/media cifs user=[username],pass=[pass],uid=1000,gid=1000,noperm 0 0
-  ```
-
-- Save, then install CIFS `sudo apt-get install cifs-utils`
-
-- Reboot
 
 ## Pihole
 
