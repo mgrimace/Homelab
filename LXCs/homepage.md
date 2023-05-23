@@ -1,6 +1,6 @@
 # Homepage 
 
-[Homepage](https://gethomepage.dev/en/installation/) is a neat way to collect your various service WebUIs in one convenient place, here is a screenshot of my current setup:
+[Homepage](https://gethomepage.dev/en/installation/) is a neat way to collect your various service WebUI URLs in one convenient place.
 
 ## Installation
 
