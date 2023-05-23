@@ -12,11 +12,11 @@ My first ever home server setup and installation notes. I don't know what I'm do
 5. [Create Plex and Arr LXC containers](PlexLXC.md)
 6. [Setup the Arrs for organizing media](Arrs.md)
 7. Guides for other containers:
-   1. [Calibre, Calibre-Web](#calibre.md)
-   2. [Home Utilities (e.g., Pi-Hole, Homebridge)](Home_Utilities.md)
-   3. [Homepage Dashboard](homepage.md)
-   4. [Game Utilities (e.g., scrape free Steam games)](Game_Utilities.md)
-   5. [General purpose LXCs](General_LXCs.md)
+   1. [Calibre, Calibre-Web](LXCs/Media_Calibre.md)
+   2. [Home Utilities (e.g., Pi-Hole, Homebridge)](LXCs/Home_Utilities.md)
+   3. [Homepage Dashboard](LXCs/Dashboards_Homepage.md)
+   4. [Game Utilities (e.g., scrape free Steam games)](LXCs/Game_Utilities.md)
+   5. [General purpose LXCs](LXCs/General_LXCs.md)
 
 
 # Overview
