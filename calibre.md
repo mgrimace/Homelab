@@ -1,10 +1,8 @@
 # Calibre
 
-**THIS IS A WIP**
+Create Ubuntu LXC but give 10 gb space for docker, and set it to `privileged` to mount your media folder
 
-create ubuntu lxc but give 10 gb space for docker, etc,  priveleged for mount
-
-`bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/ubuntu.sh)"`
+Script to create a Ubuntu LXC: `bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/ubuntu.sh)"`
 
 ## Mount your media share
 
@@ -148,4 +146,4 @@ add kindle previewer with wine to convert to KFX
 
 setup calibre server for kobo?
 
-- - - - 
+- - - -

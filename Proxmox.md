@@ -1,4 +1,6 @@
-Proxmox
+# Proxmox
+
+## Install proxmox on your server hardware
 
 1. Create a bootable USB using RUFUS, and write the latest Proxmox ISO to the disk
 2. Boot into the USB, and select install Proxmox VE

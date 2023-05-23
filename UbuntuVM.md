@@ -2,7 +2,7 @@
 
 In proxmox, download a Ubuntu server iso, then create a new VM. I'm following this [guide](https://www.youtube.com/watch?v=p6aSlcbDHqc&t=474s), but notably I'll be installing the VM to my NVME, and not the shared storage.
 
-**Note:** It will likely be smarter to host plex as an LXC container, and then all the arr software in a separate LXC. I'm going to follow through with a VM for now, but may shift to that setup later.
+**Note:** I prefer to host my containers as LXCs as they share resources, whereas a VM dedicates the assigned resources to the machine whether you use them or not. I'm keeping this for reference though. 
 
 ## VM settings
 

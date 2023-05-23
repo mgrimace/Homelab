@@ -5,13 +5,19 @@ My first ever home server setup and installation notes. I don't know what I'm do
 
 ## Table of contents
 
-1. [Overview](##Overview])
-2. [Hardware installation](Hardware.md/#Hardware)
-3. [Proxmox installation and setup](Proxmox.md/#Proxmox)
+1. [Overview](#Overview])
+2. [Hardware installation](Hardware.md)
+3. [Proxmox installation and setup](Proxmox.md)
 4. [Open Media Vault installation and setup](OMV.md)
 5. [Create Plex and Arr LXC containers](PlexLXC.md)
 6. [Setup the Arrs for organizing media](Arrs.md)
-7. [Install other LXCs (e.g., Homebridge) and setup a dashboard](LXCs.md)
+7. Guides for other containers:
+   1. [Calibre, Calibre-Web](#calibre.md)
+   2. [Home Utilities (e.g., Pi-Hole, Homebridge)](Home_Utilities.md)
+   3. [Homepage Dashboard](homepage.md)
+   4. [Game Utilities (e.g., scrape free Steam games)](Game_Utilities.md)
+   5. [General purpose LXCs](General_LXCs.md)
+
 
 # Overview
 
@@ -25,12 +31,8 @@ Create a small, low-power, always-on Plex server, which will use the *arr suite 
 
 - Virtual ebook library using Calibre 
 - Homebridge to make our smart devices connect into Apple Homekit
-- Minecraft server
-- A lightweight virtual machine to test scripts and bots.
-
-### A note on documentation
-
-I intend to use this project to learn how to create a home server, learn Proxmox, virtualization, networking, and all the other fun things that come along with it. I am comfortable using SSH and the command line, and I have set up some small Raspberry Pi home projects [previously](https://github.com/mgrimace/PiHole-Wireguard-and-Homebridge-on-Raspberry-Pi-Zero-2) (i.e., PiHole, homebridge using docker containers). This readme will serve as my collection of my notes, resources, and step-by-step instructions. 
+- Secondary Pi-Hole for DNS (see this [guide](https://github.com/mgrimace/PiHole-Wireguard-and-Homebridge-on-Raspberry-Pi-Zero-2) for my primary on a Raspberry Pi Zero 2w)
+- Try out various other bots, scripts, etc.
 
 ## The hardware
 
@@ -42,16 +44,9 @@ Using Proxmox, the main NVME will host various Virtual Machines (VMs), and Linux
 
 ### NVME - main drive
 
-- Proxmox as the main 'OS' - it manages the virtualization: https://www.proxmox.com/en/
+- Proxmox as the main 'OS' - it manages the virtualization: https://www.proxmox.com/en/ and the primary storage for the various VMs and LXCs
   - VM1: Open-media vault or Unraid (to share the second SSD media drive as a NAS and to the other VMs) 
-  - VM2: ubuntu with Plex + the various 'arr' softwares in containers (note I ended up using separate LXCs for both, using ibramenu)
-    - Dockstarter seems to be an easy way to set up the required software: https://dockstarter.com
-    - Ibramenu is a potential alternative, which seems to have a focus on Plex in particular and may be better integrated (e.g., setup and integrated properly with hardlinks and trash guides, see below): https://ibramenu.io/
-  - VM3 or LXC: Calibre (ebook) server for our various Kindles/Kobos 
-    - Likely this will consist of Calibre which is needed to organize the database (and serves as the main GUI) + Calibre Server (?) + Calibre web (?) which is a web front-end. This looks like it will be complicated, especially with Readarr integration.
-  - LXC1: homebridge (to make smarthome stuff appear in apple homekit, offloaded from pi zero). See scripts link below.
-  - VM4 (?): Something to run python scripts and bots, maybe a light ubuntu or dietpi or something small 
-  - VM5 (?): minecraft server  
+  - Separate Linux Containers (LXCs) for each service, e.g., LXC1 = Plex, LXC2 = Arrs, LXC3 = Calibre and so on.
 
 ### SSD - media storage
 
@@ -59,6 +54,8 @@ Using Proxmox, the main NVME will host various Virtual Machines (VMs), and Linux
 - The file structure will be organized for hardlinking, following: https://trash-guides.info/Hardlinks/Hardlinks-and-Instant-Moves/
 
 ## Setup Guides and resources
+
+Generally speaking, I'll be using a Ibramenu to handle most of setup for the media-related dockers (e.g., Plex, Arrs). Ibramenu: https://github.com/ibracorp/ibramenu
 
 ### Arrs 
 
