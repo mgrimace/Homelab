@@ -304,3 +304,88 @@ Widgets.yaml = the header setup
     target: _blank
 ```
 
+## Setup Dockerproxy to view docker container statuses
+
+Attempting to setup docker proxy so dockers in various separate containers can send their status to Homepage
+
+In each container using ibramenu, run ibramenu, network, and install docker proxy.
+
+On the homepage container edit the compose.yaml and add the following:
+
+```yaml
+version: "3.3"
+services:
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    environment:
+        - CONTAINERS=1 # Allow access to viewing containers
+        - POST=0 # Disallow any POST operations (effectively read-only)
+    ports:
+        - 2375:2375
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+    restart: unless-stopped
+
+homepage:    
+   image: ghcr.io/benphelps/homepage:latest    
+   container_name: homepage    
+   ports:      
+       - 3000:3000    
+   volumes:      
+       - /opt/appdata/homepage/config:/app/config 
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/media:/media
+    restart: unless-stopped
+    environment:
+      PUID: 1000
+      PGID: 1000
+```
+
+Then, I stopped, removed, and rebuilt the container: `docker stop homepage`, `docker rm homepage` , `docker compose up -d`
+
+on other containers without ibramenu, make a Dockerproxy directory in opt/appdata, make a new docker compose file and add the following:
+
+```yaml
+version: "3.3"
+services:
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    environment:
+        - CONTAINERS=1 # Allow access to viewing containers
+        - POST=0 # Disallow any POST operations (effectively read-only)
+    ports:
+        - 2375:2375
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+    restart: unless-stopped
+```
+
+ `docker compose up -d`
+
+### Configure the services on Homepage to show the Docker container status
+
+Back on homepage console
+
+edit the docker.yaml config
+
+add each container's detail and give them a name, for example:
+
+```
+docker-arr:
+  host: [IP]
+  port: 2375
+
+docker-plex:
+  host: [IP]
+  port: 2375
+```
+
+Then in services.yaml, add the following lines to each of your services (just before widget, this is just an example, so be sure to use the right names for your project)
+
+```
+server: docker-arr # The docker server that was configured
+container: sonarr # The name of the container you'd like to connect
+```
+

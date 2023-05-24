@@ -98,3 +98,124 @@ wget https://github.com/maxisoft/ASFFreeGameshttps://github.com/maxisoft/ASFFree
 sudo reboot
 ```
 
+## Epic
+
+Install a docker script image, likely 6 gb (since it will use chrome) and 512 ram, select y to docker compose.
+
+cd opt
+
+mkdir appdata && cd appdata
+
+mkdir epic && cd epic
+
+mkdir config && cd ...
+
+nano compose.yaml
+
+```dockerfile
+services:
+  epicgames-freegames:
+    restart: unless-stopped
+    container_name: epicgames-freegames
+    environment:
+      - TZ=Canada/Toronto
+    volumes:
+      - /opt/appdata/epic/config:/usr/app/config
+    image: charlocharlie/epicgames-freegames:latest
+    ports:
+      - 3000:3000
+```
+
+save, exit
+
+cd config
+
+nano config.json, see instructions for filling this out, this is the tricky part
+
+```json
+{
+  "runOnStartup": true,
+  "cronSchedule": "5 16 * * *",
+  "logLevel": "info",
+  "webPortalConfig": {
+    "baseUrl": "https://epic.exmaple.com",
+  },
+  "accounts": [
+    {
+      "email": "example@gmail.com",
+      "password": "abc1234",
+      "totp": "EMNCF83ULU3K3PXPJBSWY3DPEHPK3PXPJWY3DPEHPK3YI69R39NE"
+    },
+  ],
+  "notifiers": [
+    // You may configure as many of any notifier as needed
+    // Here are some examples of each type
+    {
+      "type": "email",
+      "smtpHost": "smtp.gmail.com",
+      "smtpPort": 587,
+      "emailSenderAddress": "hello@gmail.com",
+      "emailSenderName": "Epic Games Captchas",
+      "emailRecipientAddress": "hello@gmail.com",
+      "secure": false,
+      "auth": {
+          "user": "hello@gmail.com",
+          "pass": "abc123",
+      },
+    },
+    {
+      "type": "discord",
+      "webhookUrl": "https://discord.com/api/webhooks/123456789123456789/A-abcdefghijklmn-abcdefghijklmnopqrst12345678-abcdefghijklmnop123456",
+      // Optional list of users or roles to mention
+      "mentionedUsers": ["914360712086843432"],
+      "mentionedRoles": ["734548250895319070"],
+    },
+    {
+      "type": "telegram",
+      // Optional Custom TELEGRAM server URL
+      "apiUrl": "https://api.telegram.org",
+      "token": "644739147:AAGMPo-Jz3mKRnHRTnrPEDi7jUF1vqNOD5k",
+      "chatId": "-987654321",
+    },
+    {
+      "type": "apprise",
+      "apiUrl": "http://192.168.1.2:8000",
+      "urls": "mailto://user:pass@gmail.com",
+    },
+    {
+      "type": "pushover",
+      "token": "a172fyyl9gw99p2xi16tq8hnib48p2",
+      "userKey": "uvgidym7l5ggpwu2r8i1oy6diaapll",
+    },
+    {
+      "type": "gotify",
+      "apiUrl": "https://gotify.net",
+      "token": "SnL-wAvmfo_QT",
+    },
+    {
+      "type": "homeassistant",
+      "instance": "https://homeassistant.example.com",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+      "notifyservice": "mobile_app_smartphone_name",
+    },
+    {
+      "type": "bark",
+      // your bark key
+      "key": "xxxxxxxxxxxxxxxxxxxxxx",
+      // bark title, optional, default: 'epicgames-freegames'
+      "title": "epicgames-freegames",
+      // bark group, optional, default: 'epicgames-freegames'
+      "group": "epicgames-freegames",
+      // bark private service address, optional, default: 'https://api.day.app'
+      "apiUrl": "https://api.day.app"
+    },
+    {
+        "type": "ntfy",
+        "webhookUrl": "https://ntfy.example.com/mytopic",
+        "priority": "urgent",
+        "token": "tk_mytoken"
+    },
+  ],
+}
+```
+

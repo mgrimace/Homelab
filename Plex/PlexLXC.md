@@ -14,7 +14,7 @@ In principle, I'm following this [guide](https://youtu.be/SP2ZCDiQrvU) for setti
   - I give it 4-6 cores
   - I give it 4096 or more memory
   - Set a static IP in network e.g., 192.168.0.134/24
-- Don't start automatically, go to otions, start at boot, and change the start order to run after your vm
+- Don't start automatically, go to options, start at boot, and change the start order to run after your vm
 - Go to features, and enable nesting, NFS, and cifs/smb
 
 ## Pass through the iGPU to the Plex container for hardware transcoding (step 1, on proxmox)
@@ -90,7 +90,7 @@ docker restart plex
 ## Setup shared media drive file structure
 
 - Mount your share on your own computer, and start setting up the file structure per trash guide
-- add whatever foldres (I added tv4k and movies4k and tv-anime)
+- add whatever folders (I added tv4k and movies4k and tv-anime)
 
 
 
