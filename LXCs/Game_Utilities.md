@@ -100,19 +100,25 @@ sudo reboot
 
 ## Epic
 
-Install a docker script image, likely 6 gb (since it will use chrome) and 512 ram, select y to docker compose.
+Install a docker script image, likely 6 gb (since it will use chrome) and 512 ram, select y to docker compose: `bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/docker.sh)"`
 
-cd opt
+### Create the file structure
+
+```bash
+cd /opt/
 
 mkdir appdata && cd appdata
 
 mkdir epic && cd epic
 
-mkdir config && cd ...
+mkdir config && cd ..
 
 nano compose.yaml
+```
 
-```dockerfile
+### Create the compose file
+
+```bash
 services:
   epicgames-freegames:
     restart: unless-stopped
@@ -126,11 +132,15 @@ services:
       - 3000:3000
 ```
 
-save, exit
+### Create the config file
 
+```bash
 cd config
 
-nano config.json, see instructions for filling this out, this is the tricky part
+nano config.json
+```
+
+See [instructions](https://github.com/claabs/epicgames-freegames-node) for filling out the config, this is the tricky part for me. For now I'm making this local-only. As in, it should work and let me answer captchas when I'm connected to my home network (until I figure out reverse proxies, etc.)
 
 ```json
 {
@@ -138,7 +148,7 @@ nano config.json, see instructions for filling this out, this is the tricky part
   "cronSchedule": "5 16 * * *",
   "logLevel": "info",
   "webPortalConfig": {
-    "baseUrl": "https://epic.exmaple.com",
+    "baseUrl": "http://[localIP]:3000",
   },
   "accounts": [
     {
@@ -219,3 +229,6 @@ nano config.json, see instructions for filling this out, this is the tricky part
 }
 ```
 
+### Start the container
+
+use `docker compose up -d` to start the container! 
