@@ -4,7 +4,7 @@
 
 ## Installation
 
-I started from a docker image, and selected `advanced` and made it privileged, with 1024 ram, and yes to `docker compose`
+I started from a docker image, and selected `advanced` and made it privileged (which is important for mounting a shared drive), with 1024 ram, and yes to `docker compose`
 
 ```bash
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/docker.sh)"
@@ -40,7 +40,7 @@ services:
     volumes:
       - /opt/appdata/homepage/config:/app/config # Make sure your local config directory exists
       - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations, see alternative methods
-      - /mnt/media:/media
+      - /mnt/media:/media #this is my mounted media share
     restart: unless-stopped #this is added from the initial instructions
     environment:
       PUID: 1000
@@ -53,11 +53,14 @@ Don't run the compose file yet, first...
 
 This is so you can show how much space is available on your homepage. This assumes you have a media share via CIFS/SMB (e.g., OMV), that you've shared a folder called `data`, and that you have a username and login for this share.
 
-`apt install cifs-utils`
+1. Make sure the container is privileged
+2. Install CIFS utils on your LXC: `apt install cifs-utils`
 
-Then, `nano /etc/fstab`
+### Step 1: Mount the share to your LXC
 
-Add the following:
+Add the mount to, `nano /etc/fstab`
+
+Add the following, making sure to use your own OMV IP
 
 ```bash
 #media
@@ -75,6 +78,40 @@ password=[your password] #type it in as-is, without the []
 
 Reboot the system
 
+#### Step 2: Mount the share to your Homepage docker compose
+
+```dockerfile
+version: "3.3"
+services:
+  homepage:
+    image: ghcr.io/benphelps/homepage:latest
+    container_name: homepage
+    ports:
+      - 3000:3000
+    volumes:
+      - /opt/appdata/homepage/config:/app/config # Make sure your local config directory exists
+      - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations, see alternative methods
+      - /mnt/media:/media #this is my mounted media share
+    restart: unless-stopped #this is added from the initial instructions
+    environment:
+      PUID: 1000
+      PGID: 1000
+```
+
+#### Step 3: Define the drive in your widgets.yaml
+
+Add /media to your disks to show your shared storage that we defined above as 'media'. I ended up removing the default container disk `/` because I don't care how much the Homepage LXC is using/free, just the overall system
+
+```yaml
+- resources:
+    cpu: true
+    memory: true
+    expanded: true
+    disk:
+      - /
+      - /media
+```
+
 ## Configure Homepage
 
 Your homepage is at: IP:3000
@@ -82,9 +119,11 @@ Your homepage is at: IP:3000
 Your config files live in /opt/appdata/homepage/config. Use the [guide](https://gethomepage.dev/en/configs/services/) to set up various services and widgets.
 I don't yet grasp how to use docker socket to link to dockers on different LXCs.
 
-Here are mine for examples:
+Here are mine for example:
 
-Services.yaml = the actual links and API tokens/passwords for the various services you're running.
+#### Services.yaml 
+
+use the the actual links and API tokens/passwords for the various services you're running.
 
 ```yaml
 ---
@@ -250,7 +289,9 @@ Services.yaml = the actual links and API tokens/passwords for the various servic
             key: [hidden]
 ```
 
-Settings.yaml = the overall layout settings
+#### Settings.yaml 
+
+the overall layout settings
 
 ```yaml
 ---
@@ -276,7 +317,9 @@ layout:
 fiveColumns: true
 ```
 
-Widgets.yaml = the header setup
+#### Widgets.yaml
+
+ The header setup
 
 ```yaml
 ---
@@ -333,7 +376,7 @@ homepage:
    ports:      
        - 3000:3000    
    volumes:      
-       - /opt/appdata/homepage/config:/app/config 
+      - /opt/appdata/homepage/config:/app/config 
       - /var/run/docker.sock:/var/run/docker.sock
       - /mnt/media:/media
     restart: unless-stopped
@@ -344,7 +387,7 @@ homepage:
 
 Then, I stopped, removed, and rebuilt the container: `docker stop homepage`, `docker rm homepage` , `docker compose up -d`
 
-on other containers without ibramenu, make a Dockerproxy directory in opt/appdata, make a new docker compose file and add the following:
+On other containers that were created without ibramenu, make a Dockerproxy directory in opt/appdata, make a new docker compose file and add the following:
 
 ```yaml
 version: "3.3"

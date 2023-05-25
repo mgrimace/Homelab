@@ -3,7 +3,7 @@
 These are game utilities to run on the server mostly relating to scraping and automatically redeeming free games.
 
 1. [ArchiSteamFarm](#ArchiSteamFarm) - automatically farms steam cards, but I use it to find/redeem free steam games via a plugin
-2. Epic - not yet setup, this is for redeeming free Epic games.
+2. [Epic free games claimer](#Epic)
 
 ## ArchiSteamFarm
 
@@ -232,3 +232,7 @@ See [instructions](https://github.com/claabs/epicgames-freegames-node) for filli
 ### Start the container
 
 use `docker compose up -d` to start the container! 
+
+Note: I had to import a cookie to bypass the login issues, more info [here](https://github.com/claabs/epicgames-freegames-node#cookie-import). It was relatively easy.
+
+Don't forget to add this docker to your central [portainer](LXCs/portainer.md) and to your [homepage](LXCs/Dashboards_Homepage.md) with its docker status 
