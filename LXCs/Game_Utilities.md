@@ -94,7 +94,7 @@ We need to make config files, and the easiest way to do this is to use the ASF c
 ```bash
 su - asf
 cd ArchiSteamFarm/plugins
-wget https://github.com/maxisoft/ASFFreeGameshttps://github.com/maxisoft/ASFFreeGames #be sure to update with the latest .dll release 
+wget https://github.com/maxisoft/ASFFreeGames #be sure to update with the latest .dll release 
 sudo reboot
 ```
 
