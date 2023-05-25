@@ -17,6 +17,7 @@ My first ever home server setup and installation notes. I don't know what I'm do
    3. [Homepage Dashboard](LXCs/Dashboards_Homepage.md)
    4. [Game Utilities (e.g., scrape free Steam games)](LXCs/Game_Utilities.md)
    5. [General purpose LXCs](LXCs/General_LXCs.md)
+   6. [Set up a central portainer to manage all the dockers](LXCs/Portainer.md)
 
 
 # Overview

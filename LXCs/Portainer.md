@@ -27,4 +27,4 @@ Then, back in your portainer, go to home, settings, environments, add  environme
 
 Then at the bottom, one-by-one add each docker LXC, give it a name (e.g., docker-arr) and enter the IP:9001. 
 
-Don't forget to add portainer to your homepage!
+Don't forget to add portainer to your homepage! The portainer widget will only show one environment (e.g., one set of dockers), but you can cut/paste the same service entry and just change the 'env' variable and name (e.g. Portainer (Calibre)), all using hte same API token, IP, etc.
