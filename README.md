@@ -9,8 +9,8 @@ My first ever home server setup and installation notes. I don't know what I'm do
 2. [Hardware installation](Hardware.md)
 3. [Proxmox installation and setup](Proxmox.md)
 4. [Open Media Vault installation and setup](OMV.md)
-5. [Setup Plex](LXCs/Plex.md)
-6. [Setup Arrs](LXCs/Arrs.md)
+5. [Setup Plex](Plex/Plex.md)
+6. [Setup Arrs](Plex/Arrs.md)
 7. Guides for other containers:
    1. [Calibre, Calibre-Web](LXCs/Media_Calibre.md)
    2. [Home Utilities (e.g., Pi-Hole, Homebridge)](LXCs/Home_Utilities.md)
