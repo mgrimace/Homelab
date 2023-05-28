@@ -1,3 +1,7 @@
+# Plex
+
+__TOC__
+
 ## Plex LXC installation
 
 Ok, I switched conceptually from a VM to an LXC. The main rationale is that the Linux containers are much lighter weight. Also, as far as I understand, the LXCs will only use the resources as-needed vs., a VM which allocates the full resources to the virtual computer (i.e., if I assign 8 gigs of ram, that ram is gone from the pool regardless if the VM actually needs it or not).
@@ -92,5 +96,8 @@ docker restart plex
 - Mount your share on your own computer, and start setting up the file structure per trash guide
 - add whatever folders (I added tv4k and movies4k and tv-anime)
 
+## (Optional) automatically delete watched episodes
 
-
+1. in Qbittorrent, make sure torrent downloads are paused after a certain period of time or ratio
+2. Make sure Sonarr/Radar are set to 'unmonitor deleted shows' in the media settings (so it doesn't then try to re-download the missing file)
+3. go to Plex, click the 'pencil' icon for the show, go to advanced, delete episodes and choose your option (e.g., immediately after watching, after a day, after a week, etc.)
