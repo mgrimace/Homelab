@@ -1,7 +1,5 @@
 # Plex
 
-__TOC__
-
 ## Plex LXC installation
 
 Ok, I switched conceptually from a VM to an LXC. The main rationale is that the Linux containers are much lighter weight. Also, as far as I understand, the LXCs will only use the resources as-needed vs., a VM which allocates the full resources to the virtual computer (i.e., if I assign 8 gigs of ram, that ram is gone from the pool regardless if the VM actually needs it or not).
