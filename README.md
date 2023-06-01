@@ -18,6 +18,7 @@ My first ever home server setup and installation notes. I don't know what I'm do
    4. [Game Utilities (e.g., scrape free Steam games)](LXCs/Game_Utilities.md)
    5. [General purpose LXCs](LXCs/General_LXCs.md)
    6. [Set up a central portainer to manage all the dockers](LXCs/Portainer.md)
+8. **New:**[Setup a reverse proxy with NGINX, Cloudflare, and Authentik](Network/Reverse.md)
 
 
 # Overview
