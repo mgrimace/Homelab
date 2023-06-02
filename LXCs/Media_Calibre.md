@@ -156,12 +156,19 @@ You can remove 'random books' by clicking your user icon, as well as various sid
 
 if you made it this far, **backup your container now**, this was an enormous pain to get here with a lot of trial and error.
 
----
+## Calibre-web book conversion and kepubify
 
-get things organized for automatic adding, conversion, sharing, shelves in calibre web, users in calibre web etc.
+Add `      - DOCKER_MODS=linuxserver/mods:universal-calibre` under environments in your docker compose file for calibre-web services. 
 
-add kindle previewer with wine to convert to KFX
+```bash
+docker compose pull
+docker compose up -d
+docker image prune
+```
 
-setup calibre server for kobo?
+Wait a minute for Calibre-web to restart, it takes longer than you think.
 
-- - - -
+In calibre-web, go to settings, basic config settings, external binaries and add `usr/bin/ebook-convert` to convert and `/usr/bin/kepubify` to the kepubify pathway.
+
+While in settings, turn on uploads, and be sure to also go to your user and enable uploads for your user.
+

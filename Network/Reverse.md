@@ -263,18 +263,87 @@ location @goauthentik_proxy_signin {
 
 ## Make new users in authentik! add new apps!
 
-Overall:
+### Overall:
 
 1. add the app in NPM + SSL + advanced code snippet above
 2. add the app provider in authentik
 3. add the app in authentik, 
 4. add the app to the outposts in authentik
 
-Special configs:
+## Specific Configs
+
+### Home Assistant
 
 Home assistant: https://theprivatesmarthome.com/how-to/put-home-assistant-behind-existing-nginx-proxy-manager/
 
 don't use authentik for home assistant (works, but it's complicated to set up) - use app with your new address!
+
+### Calibre-web 
+
+You can automatically log-in to calibre web using authentik if the usernames are the same. Keep that in mind when adding other users.
+
+Same steps as default, but in NPM, advanced, add (noting the proxy buffers)
+
+```yaml
+proxy_buffer_size 128k;
+proxy_buffers 4 256k;
+proxy_busy_buffers_size 256k;
+
+location / {
+    # Put your proxy_pass to your application here
+    proxy_pass          $forward_scheme://$server:$port;
+
+    # authentik-specific config
+    auth_request        /outpost.goauthentik.io/auth/nginx;
+    error_page          401 = @goauthentik_proxy_signin;
+    auth_request_set $auth_cookie $upstream_http_set_cookie;
+    add_header Set-Cookie $auth_cookie;
+
+    # translate headers from the outposts back to the actual upstream
+    auth_request_set $authentik_username $upstream_http_x_authentik_username;
+    auth_request_set $authentik_groups $upstream_http_x_authentik_groups;
+    auth_request_set $authentik_email $upstream_http_x_authentik_email;
+    auth_request_set $authentik_name $upstream_http_x_authentik_name;
+    auth_request_set $authentik_uid $upstream_http_x_authentik_uid;
+
+    proxy_set_header X-authentik-username $authentik_username;
+    proxy_set_header X-authentik-groups $authentik_groups;
+    proxy_set_header X-authentik-email $authentik_email;
+    proxy_set_header X-authentik-name $authentik_name;
+    proxy_set_header X-authentik-uid $authentik_uid;
+}
+
+# all requests to /outpost.goauthentik.io must be accessible without authentication
+location /outpost.goauthentik.io {
+    proxy_pass          http://auth.example.com/outpost.goauthentik.io;
+    # ensure the host of this vserver matches your external URL you've configured
+    # in authentik
+    proxy_set_header    Host $host;
+    proxy_set_header    X-Original-URL $scheme://$http_host$request_uri;
+    add_header          Set-Cookie $auth_cookie;
+    auth_request_set    $auth_cookie $upstream_http_set_cookie;
+
+    # required for POST requests to work
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+}
+
+# Special location for when the /auth endpoint returns a 401,
+# redirect to the /start URL which initiates SSO
+location @goauthentik_proxy_signin {
+    internal;
+    add_header Set-Cookie $auth_cookie;
+    return 302 /outpost.goauthentik.io/start?rd=$request_uri;
+    # For domain level, use the below error_page to redirect to your authentik server with the full redirect path
+    # return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$http_host$request_uri;
+}
+```
+
+Set-up auto-login using headers from authentik
+
+Go to calibre-web settings, basic configuration, allow reverse rpxoy authetnication, add `X-authentik-username` 
+
+Make sure your authentik username is the same as calibre-webs (e.g., I changed my calibre username from admin to akadmin to match authentik)
 
 ### Add NPM and Authentik to homepage:
 

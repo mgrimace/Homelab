@@ -102,3 +102,7 @@ On a Mac, open Finder, the select `go` from the menubar, and `connect to server`
 - Username/Password: add your OMV username/password (that you generated for the share above). 
   - Note if you used keychain to remember the password, don't let it fill in your email, just the username.
 - Then it should scan the share, and you can select `data` from share
+
+## Backup the VM, but not the storage
+
+To backup your OMV OS, but not the attached storage, go to proxmox, hardware, and select the attached storage (e.g., 2 TB disk). Click edit, and uncheck 'backup'. That way only the VM will be backed up.
