@@ -148,3 +148,9 @@ Set-up auto-login using headers from authentik
 Go to calibre-web settings, basic configuration, allow reverse rpxoy authetnication, add `X-authentik-username` 
 
 Make sure your authentik username is the same as calibre-webs (e.g., I changed my calibre username from admin to akadmin to match authentik)
+
+Proxmox
+
+See here for setting up Proxmox: https://goauthentik.io/integrations/services/proxmox-ve/
+
+The main thing that I need to add was a new user in Permissions/Users to match my login, then go back to the Permissions tab (which looks just like a down arrow) and actually set the admin permissions for the user (or alternatively, create an 'admins' group)

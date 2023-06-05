@@ -6,6 +6,8 @@ default user/pass is admin/adminadmin - see trash guide: https://trash-guides.in
 
 I added categories for 4k, such as tv4k, movies4k as well so that I can optionally use Overseerr to request in 4k for a few shows if I want.
 
+**Enable Dark mode:** In webUI, select use alternative webui :vue. It looks better, and select dark mode via the toggle in the bottom left sidebard
+
 ### Prowlarr
 
 created an account, and setup my first torrent indexer
