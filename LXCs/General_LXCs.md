@@ -54,3 +54,16 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
+## Enable root SSH
+
+Many of your LXCs will use root by default, and you can enable ssh (e.g., to use Termius or other SSH software) with the following. In your container:
+
+```bash
+sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+sudo systemctl restart ssh
+
+#then you need to add a root password
+
+sudo passwd
+```
+

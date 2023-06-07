@@ -2,6 +2,15 @@
 
 - Download ISO in proxmox
 - Create a new VM
+- alternative, create as an LXC? in progress.
+
+## LXC method
+
+use this script in your node (proxmox) to install OMV as an LXC container:
+
+`bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/omv.sh)"`
+
+Mount ssd? use advanced and create a privileged LXC for OMV, then try below?
 
 ## VM settings
 
@@ -10,7 +19,7 @@ Here's the settings I used for the OMV virtual machine
 | General                                                      | OS                                        | System             | Disks                                                | CPU                                                          |
 | ------------------------------------------------------------ | ----------------------------------------- | ------------------ | ---------------------------------------------------- | ------------------------------------------------------------ |
 | **name:** omv-nas (or any name that suits you)               | Select the OMV iso you downlaoded earlier | Check `QEMU agent` | Set a disk size of 8GiB for the OMV operating system | **Number of cores:** `2` , select the type as `host` from the dropdown list |
-| **advanced:** start/shutdown order: `1`, startup delay `60` *, check `start at boot` |                                           |                    | Check `ssd emulation`                                | **Memory:** `4096`, uncheck ballooning                       |
+| **advanced:** start/shutdown order: `1`, startup delay `60` *, check `start at boot` |                                           |                    | Check `ssd emulation`                                | **Memory:** `~~4096~~`2048 (OMV uses less than 1gb itself + OS ram recommendation 512-2gb, monitor and increase if necessary), uncheck ballooning |
 
 **This ensures that the NAS starts first and makes the shares available before the other VMs (e.g., Plex) start*
 
