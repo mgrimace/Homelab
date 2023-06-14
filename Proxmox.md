@@ -15,6 +15,10 @@ Also, set this (and all vms) as static IPs in your router.
 
 ## Setup
 
+Use this post install script `bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"` I said 'yes' to all options except for adding the 'test' repo. Note I disabled high availability to save resources and may want to re-enable that later if I'm adding more clustered nodes.
+
+### Alternatively
+
 Log in from your browser, and select your node (mine's called proxmox), then updates, repositories.
 
 Disable the `enterprise` repository, and add the `pve-no-subscription` repo. Go up to updates, hit refresh and update your system.

@@ -143,14 +143,28 @@ location @goauthentik_proxy_signin {
 }
 ```
 
-Set-up auto-login using headers from authentik
+### Set-up auto-login using headers from authentik
 
 Go to calibre-web settings, basic configuration, allow reverse rpxoy authetnication, add `X-authentik-username` 
 
 Make sure your authentik username is the same as calibre-webs (e.g., I changed my calibre username from admin to akadmin to match authentik)
 
-Proxmox
+## Proxmox
 
-See here for setting up Proxmox: https://goauthentik.io/integrations/services/proxmox-ve/
+### setup
 
-The main thing that I need to add was a new user in Permissions/Users to match my login, then go back to the Permissions tab (which looks just like a down arrow) and actually set the admin permissions for the user (or alternatively, create an 'admins' group)
+Create your reverse proxy in NPM, e.g., proxmox.yourdomain.com. Use your Cloudflare SSL certificate as usual. There is no additional config in NPM, just be sure to use http<u>s</u>://IP:8006.
+
+See here for setting up Authentik: https://goauthentik.io/integrations/services/proxmox-ve/
+
+Basically follow the same instructions, except in `Providers` omit the port number (:8006) and feel free to leave the launch URL blank in the `Application`. The port is already specified by NPM.
+
+### login
+
+Then, once you go to promox.yourdomain.com, it'll pop-up the login screen, select `Authentik` from the Realm drop-down, then click `login openID redirect`, and it should log you in, and create a user for you based on your proxmox username, e.g., `user@authentik`.
+
+### make your authentik user a proxmox admin
+
+Youll need to make this user and administrator, log back into proxmox as root.
+
+Go back to the Permissions tab (which looks just like a down arrow) and actually set the admin permissions for the user (or alternatively, create an 'admins' group)
