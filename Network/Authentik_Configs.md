@@ -6,15 +6,17 @@
 
 ## Use Plex credentials to login/create users
 
-in authentik -> Sources
+in authentik -> Federation & Social Logins -> Sources
 
 Add *Plex* as a *source*
 
 - Name: Choose a name
 - Slug: Set a slug
+- User matching mode: I selected `link to a user with identical email....` so that I can link my Plex to my admin account without creating separate users
+- Under protocol settings:
 - Client ID: Set a unique Client Id or leave the generated ID
 - Press *Load Servers* to login to plex and pick the authorized Plex Servers for "allowed users"
-- Decide if *anyone* with a plex account can authenticate or only friends you share with
+- I selected the option to `allow friends to authenticate via Plex...`, that way I can easily add new users. Note that the person will receive an error unless you add them as a friend within Plex first by going to: `https://app.plex.tv/desktop/#!/friends`. This prevents anyone with Plex from creating an Authentik user account.
 
 Save, and you now have Plex as a source.
 
