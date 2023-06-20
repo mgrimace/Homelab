@@ -7,7 +7,27 @@ These are game utilities to run on the server mostly relating to scraping and au
 
 ## ArchiSteamFarm
 
-Login in to your new Ubuntu LXC, and create a new user called asf
+### Docker (trickier)
+
+Here is the compose file I ended up using after initially setting this up bare-metal. I imported all my config files and plugins from my initial setup. The official ASF documentation suggests installing bare-metal and intructions for that are found below.
+
+```docker
+version: '3.3'
+services:
+    archisteamfarm:
+        ports:
+            - 1242:1242
+        volumes:
+            - /opt/appdata/asf/config:/app/config
+            - /opt/appdata/asf/plugins:/app/plugins/custom
+        container_name: asf
+        image: justarchi/archisteamfarm:latest
+        restart: unless-stopped
+```
+
+### Bare Metal (best way to start)
+
+Login in to your LXC, and create a new user called asf
 
 ```bash
 useradd -m asf
@@ -234,5 +254,3 @@ See [instructions](https://github.com/claabs/epicgames-freegames-node) for filli
 use `docker compose up -d` to start the container! 
 
 Note: I had to import a cookie to bypass the login issues, more info [here](https://github.com/claabs/epicgames-freegames-node#cookie-import). It was relatively easy.
-
-Don't forget to add this docker to your central [portainer](LXCs/portainer.md) and to your [homepage](LXCs/Dashboards_Homepage.md) with its docker status 

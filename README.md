@@ -10,15 +10,13 @@ My first ever home server setup and installation notes. I don't know what I'm do
 3. [Proxmox installation and setup](Proxmox.md)
 4. [Open Media Vault installation and setup](OMV.md)
 5. [Setup Plex](Plex/PlexLXC.md)
-6. [Setup Arrs](Plex/Arrs.md)
-7. Guides for other containers:
+6. [Setup Arrs and other services in a Docker LXC](Plex/Arrs.md)
+7. Guides for other services:
    1. [Calibre, Calibre-Web](LXCs/Media_Calibre.md)
    2. [Home Utilities (e.g., Pi-Hole, Homebridge)](LXCs/Home_Utilities.md)
    3. [Homepage Dashboard](LXCs/Dashboards_Homepage.md)
    4. [Game Utilities (e.g., scrape free Steam games)](LXCs/Game_Utilities.md)
-   5. [General purpose LXCs](LXCs/General_LXCs.md)
-   6. [Set up a central portainer to manage all the dockers](LXCs/Portainer.md)
-8. **New:**[Setup a reverse proxy with NGINX, Cloudflare, and Authentik](Network/Reverse.md)
+8. [Setup a reverse proxy with NGINX, Cloudflare, and Authentik](Network/Reverse.md)
 
 
 # Overview
@@ -27,14 +25,7 @@ My first ever home server setup and installation notes. I don't know what I'm do
 
 ### Primary goal
 
-Create a small, low-power, always-on Plex server, which will use the *arr suite to automate obtaining and organizing media, alongside Overseerr as a front-end to handle requests for media from the family. 
-
-### Secondary goals
-
-- Virtual ebook library using Calibre 
-- Homebridge to make our smart devices connect into Apple Homekit
-- Secondary Pi-Hole for DNS (see this [guide](https://github.com/mgrimace/PiHole-Wireguard-and-Homebridge-on-Raspberry-Pi-Zero-2) for my primary on a Raspberry Pi Zero 2w)
-- Try out various other bots, scripts, etc.
+Create a small, low-power, always-on Plex server, which will use the *arr suite to automate obtaining and organizing media, alongside Overseerr as a front-end to handle requests for media from the family. Various other services will be added as well (e.g., Calibre, Pi-Hole, Home Assistant, etc.)
 
 ## The hardware
 
@@ -44,16 +35,42 @@ Micro Lenovo M920Q, I7-8700T, 16gb RAM, 512GB NVME (main), 2TB 2.5" SSD (media)
 
 Using Proxmox, the main NVME will host various Virtual Machines (VMs), and Linux Containers (LXCs). One VM in particular will function as a network accessible storage (NAS) operating system (OS) to share the second attached SSD media drive to the VMs and over the network. 
 
-### NVME - main drive
+**[Storage VM]**
 
-- Proxmox as the main 'OS' - it manages the virtualization: https://www.proxmox.com/en/ and the primary storage for the various VMs and LXCs
-  - VM1: Open-media vault or Unraid (to share the second SSD media drive as a NAS and to the other VMs) 
-  - Separate Linux Containers (LXCs) for each service, e.g., LXC1 = Plex, LXC2 = Arrs, LXC3 = Calibre and so on.
+- Open Media Vault (OMV) VM to share 2TB SSD media drive via SMB/CIFS to containers and as NAS
 
-### SSD - media storage
+**[Home Assistant OS VM]**
 
-- This drive will primarily serve as network accessible storage for media for Plex and Calibre 
-- The file structure will be organized for hardlinking, following: https://trash-guides.info/Hardlinks/Hardlinks-and-Instant-Moves/
+- Home Assistant (supervised version for add-ons)
+- Docker-wyze-bridge
+- Scrypted
+- **note**: OS versions for "supervised" since my doorbell (wyze) needs the bridge and scrypted to be added to HomeKit. HA has replaced Homebridge for me for HomeKit integration.
+
+**[Docker LXC]**
+
+- Overseerr + Arrs + qbittorrent
+- Calibre-web
+- Homepage
+- NPM
+- Authentik (redis, postgres, worker, server stack)
+- Dockerproxy
+- Portainer
+
+**[Plex LXC]**
+
+- "Bare-metal" Plex installation
+- **note**: separate from Docker stack so I don't interrupt my family viewing when messing around with other services
+
+**[Pi-Hole LXC]**
+
+- "Bare-metal" Pi-Hole installation
+
+**[Game utils, individual LXCs]**
+
+- MSRewards Bot
+- Epic games Bot - claims free Epic games
+- ArchiSteamFarm + Plugin - claims free Steam games
+- **note:** these are mainly small python scripts on tiny ubuntu LXCs with 256-512 mb ram. More info on each in the comments.
 
 ## Setup Guides and resources
 

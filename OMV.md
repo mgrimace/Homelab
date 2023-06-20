@@ -1,16 +1,10 @@
 # Open Media Vault
 
 - Download ISO in proxmox
+
 - Create a new VM
-- alternative, create as an LXC? in progress.
 
-## LXC method
-
-use this script in your node (proxmox) to install OMV as an LXC container:
-
-`bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/omv.sh)"`
-
-Mount ssd? use advanced and create a privileged LXC for OMV, then try below?
+  
 
 ## VM settings
 
@@ -36,6 +30,8 @@ Select the node (proxmox), select disks, then find the SSD, note its name. I'm u
 3. Find the disk ID `ls -l /dev/disks/by-id/` - find the serial that matches the device info from the previous command: `ata-Samsung_SSD_870_QVO_2TB_SERIAL` (note: actual serial redacted)
 4. Add the disk to the OMV: `qm set 100 -scsi1 /dev/disk/by-id/ata-Samsung_SSD_870_QVO_2TB_SERIAL` 
    1. where 100 = what we set as our OMV VM ID, and scsi1 is the virtual port number (since our NVME is already scsi0)
+
+make sure iothread is enabled for second drive in hardware
 
 Go back to your 100 OMV, make sure the new storage is there under disks, then hit start!
 
@@ -115,3 +111,7 @@ On a Mac, open Finder, the select `go` from the menubar, and `connect to server`
 ## Backup the VM, but not the storage
 
 To backup your OMV OS, but not the attached storage, go to proxmox, hardware, and select the attached storage (e.g., 2 TB disk). Click edit, and uncheck 'backup'. That way only the VM will be backed up.
+
+## Note
+
+Make sure that in your hardware tab in proxmox, that your storage drive has io thread checked/enabled.

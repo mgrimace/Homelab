@@ -1,33 +1,17 @@
-# Homepage 
+# Homepage
 
-[Homepage](https://gethomepage.dev/en/installation/) is a neat way to collect your various service WebUI URLs in one convenient place.
-
-## Installation
-
-I started from a docker image, and selected `advanced` and made it privileged (which is important for mounting a shared drive), with 1024 ram, and yes to `docker compose`
-
-```bash
-bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/docker.sh)"
-```
-
-Note that there is a pre-made Homepage LXC script here, I tried it but it doesn't use the docker version by default which I prefer.
+[Homepage](https://gethomepage.dev/en/installation/) is a neat way to collect your various service WebUI URLs in one convenient place. I've added this to my Docker LXC which contains my *arr* services.
 
 ## Set up directories
 
 ```bash
-cd /opt
-mkdir appdata
-cd appdata
+cd /opt/appdata/
 mkdir homepage
 cd homepage mkdir config
 cd ..
 ```
 
-## Create the docker compose file
-
-You should be in /opt/appdata/homepage by now
-
-`nano compose.yaml`
+## Docker Compose file
 
 ```dockerfile
 version: "3.3"
@@ -40,76 +24,20 @@ services:
     volumes:
       - /opt/appdata/homepage/config:/app/config # Make sure your local config directory exists
       - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations, see alternative methods
-      - /mnt/media:/media #this is my mounted media share
-    restart: unless-stopped #this is added from the initial instructions
+      - /mnt/media:/media # this will mount your media share to homepage so you can show stats like free space
     environment:
       PUID: 1000
       PGID: 1000
-```
+    networks:
+      - homelab
+    restart: unless-stopped
+    security_opt:
+      - apparmor:unconfined
 
-Don't run the compose file yet, first...
-
-## (optional) mount shared drive
-
-This is so you can show how much space is available on your homepage. This assumes you have a media share via CIFS/SMB (e.g., OMV), that you've shared a folder called `data`, and that you have a username and login for this share.
-
-1. Make sure the container is privileged
-2. Install CIFS utils on your LXC: `apt install cifs-utils`
-
-### Step 1: Mount the share to your LXC
-
-Add the mount to, `nano /etc/fstab`
-
-Add the following, making sure to use your own OMV IP
-
-```bash
-#media
-//[Media share IP]/data /mnt/media       cifs     ro,noperm,iocharset=utf8,rw,credentials=/root/.storage_credentials,uid=1000,gid=1000,file_mode=0660,dir_mode=0770 0       0
-```
-
-note, I added `ro,` here to be read-only, I'm not sure what the other modes/options do yet
-
-Add your credentials (i.e., your SMB user and password) to `nano /root/.storage_credentials`
-
-```bash
-username=[username] #type it in as-is, without the []
-password=[your password] #type it in as-is, without the []
-```
-
-Reboot the system
-
-#### Step 2: Mount the share to your Homepage docker compose
-
-```dockerfile
-version: "3.3"
-services:
-  homepage:
-    image: ghcr.io/benphelps/homepage:latest
-    container_name: homepage
-    ports:
-      - 3000:3000
-    volumes:
-      - /opt/appdata/homepage/config:/app/config # Make sure your local config directory exists
-      - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations, see alternative methods
-      - /mnt/media:/media #this is my mounted media share
-    restart: unless-stopped #this is added from the initial instructions
-    environment:
-      PUID: 1000
-      PGID: 1000
-```
-
-#### Step 3: Define the drive in your widgets.yaml
-
-Add /media to your disks to show your shared storage that we defined above as 'media'. I ended up removing the default container disk `/` because I don't care how much the Homepage LXC is using/free, just the overall system
-
-```yaml
-- resources:
-    cpu: true
-    memory: true
-    expanded: true
-    disk:
-      - /
-      - /media
+networks:
+  homelab:
+    driver: bridge
+    external: true
 ```
 
 ## Configure Homepage
@@ -117,9 +45,6 @@ Add /media to your disks to show your shared storage that we defined above as 'm
 Your homepage is at: IP:3000
 
 Your config files live in /opt/appdata/homepage/config. Use the [guide](https://gethomepage.dev/en/configs/services/) to set up various services and widgets.
-I don't yet grasp how to use docker socket to link to dockers on different LXCs.
-
-Here are mine for example:
 
 #### Services.yaml 
 
@@ -347,88 +272,22 @@ fiveColumns: true
     target: _blank
 ```
 
-## Setup Dockerproxy to view docker container statuses
+## Show the Docker container status
 
-Attempting to setup docker proxy so dockers in various separate containers can send their status to Homepage
+First, ensure Docker Proxy was added via Ibramenu. 
 
-In each container using ibramenu, run ibramenu, network, and install docker proxy.
-
-On the homepage container edit the compose.yaml and add the following:
-
-```yaml
-version: "3.3"
-services:
-  dockerproxy:
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest
-    container_name: dockerproxy
-    environment:
-        - CONTAINERS=1 # Allow access to viewing containers
-        - POST=0 # Disallow any POST operations (effectively read-only)
-    ports:
-        - 2375:2375
-    volumes:
-        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
-    restart: unless-stopped
-
-homepage:    
-   image: ghcr.io/benphelps/homepage:latest    
-   container_name: homepage    
-   ports:      
-       - 3000:3000    
-   volumes:      
-      - /opt/appdata/homepage/config:/app/config 
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /mnt/media:/media
-    restart: unless-stopped
-    environment:
-      PUID: 1000
-      PGID: 1000
-```
-
-Then, I stopped, removed, and rebuilt the container: `docker stop homepage`, `docker rm homepage` , `docker compose up -d`
-
-On other containers that were created without ibramenu, make a Dockerproxy directory in opt/appdata, make a new docker compose file and add the following:
-
-```yaml
-version: "3.3"
-services:
-  dockerproxy:
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest
-    container_name: dockerproxy
-    environment:
-        - CONTAINERS=1 # Allow access to viewing containers
-        - POST=0 # Disallow any POST operations (effectively read-only)
-    ports:
-        - 2375:2375
-    volumes:
-        - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
-    restart: unless-stopped
-```
-
- `docker compose up -d`
-
-### Configure the services on Homepage to show the Docker container status
-
-Back on homepage console
-
-edit the docker.yaml config
-
-add each container's detail and give them a name, for example:
+### docker.yaml
 
 ```
-docker-arr:
-  host: [IP]
-  port: 2375
-
-docker-plex:
-  host: [IP]
-  port: 2375
+my-docker:
+    host: dockerproxy
+    port: 2375
 ```
 
 Then in services.yaml, add the following lines to each of your services (just before widget, this is just an example, so be sure to use the right names for your project)
 
 ```
-server: docker-arr # The docker server that was configured
+server: my-docker
 container: sonarr # The name of the container you'd like to connect
 ```
 

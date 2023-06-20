@@ -1,4 +1,4 @@
-# General LXCs
+# General LXC info
 
 This is what I'm using for 'general' LXCs, mounting the shared data, etc., for projects that don't have a pre-built script, or if I don't want to use the pre-built script. I generally start with Ubuntu.
 
@@ -15,6 +15,8 @@ bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/ubuntu.sh)"
 If you're installing multiple Ubuntu LXCs (for various projects) and/or you use the automatic rather than the advanced options for the script, you can set a static IP and change the container name later by visiting the container in proxmox, use the DNS, hostname option to change the name of the container
 
 ## Mount media share to your LXC
+
+On the LXC in proxmox, go to options, features, and ensure CIFS is enabled (and nesting)
 
 On the container >_console, log-in,
 

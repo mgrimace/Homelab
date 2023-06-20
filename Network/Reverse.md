@@ -1,5 +1,7 @@
 # Creating a reverse proxy and to access your apps and services remotely
 
+Note, I added all these services to my main Docker LXC using Ibramenu.
+
 1. [Setup](#Conceptual_overview)
 2. [User management](Network/Users.md)
 3. [Specific app configs](Network/Authentik_Configs.md)
@@ -72,17 +74,6 @@ Type: Cname: name: @ target: DDNS
 ## Set up the reverse proxy
 
 **Note:** NPM = NGINX proxy manager, I'll probably use the terms interchangeably until I edit this guide better.
-
-### Create a Ubuntu LXC
-
-- I do so using a script, which is run in your node >_shell: `bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/ubuntu.sh)"`
-- Select advanced options, and choose unprivileged, 2 cores, 2048 mb ram, and 6-10 gb storage
-
-### Install ibramenu on your Ubuntu LXC
-
-- Install ibramenu using: `wget -qO ./i https://raw.githubusercontent.com/ibracorp/ibramenu/main/ibrainit.sh && chmod +x i && ./i`
-- Then use `ibramenu`, and install the basics (option 2, then option 1 to install everything), then go to networking and install NPM. Note if you want to add this to your homepage, add docker proxy while here.
-- After installing NPM, it will give you the webUI connection details
 
 ### Set up your router
 

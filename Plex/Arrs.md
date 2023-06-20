@@ -1,6 +1,30 @@
-## Setting up the Arrs using webUI
+# Setup Arrs and a primary Docker LXC
 
-### qBittorrent 
+The overall idea here is to setup a Docker LXC where all our additional services will be run as Docker containers in a Docker Network I'm calling 'homelab' . The primary services are the Arr suite, and qBittorrent, then other services can be added optionally.
+
+## Create the LXC
+
+- Create a new Ubuntu LXC, priveledged. Since the majority of my services are run from here, I gave it 16 mb ram, 6 cores, and 60 gb storage.
+- After creating the CT, go to options turn on nesting, NFS and SMB
+
+## Install Arr service suite
+
+- I used [Ibramenu](https://github.com/ibracorp/ibramenu) to easily install the basic dependencies, mount my SMB share, and create the docker compose files for my services: `wget -qO ./i https://raw.githubusercontent.com/ibracorp/ibramenu/main/ibrainit.sh && chmod +x i && ./i`
+- After installing, and rebooting, use the command `ibramenu` to launch it
+- Select option 2 to install the basics, then use the menu to install any other services. 
+
+## Setup shared media drive file structure
+
+- Mount your share on your own computer, and start setting up the file structure per trash guide
+- add whatever folders (I added tv4k and movies4k and tv-anime)
+
+## (Optional) automatically delete watched episodes
+
+1. in Qbittorrent, make sure torrent downloads are paused after a certain period of time or ratio
+2. Make sure Sonarr/Radar are set to 'unmonitor deleted shows' in the media settings (so it doesn't then try to re-download the missing file)
+3. go to Plex, click the 'pencil' icon for the show, go to advanced, delete episodes and choose your option (e.g., immediately after watching, after a day, after a week, etc.)
+
+## qBittorrent 
 
 default user/pass is admin/adminadmin - see trash guide: https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/ for basic setup and work through that.
 
@@ -8,13 +32,13 @@ I added categories for 4k, such as tv4k, movies4k as well so that I can optional
 
 **Enable Dark mode:** In webUI, select use alternative webui :vue. It looks better, and select dark mode via the toggle in the bottom left sidebard
 
-### Prowlarr
+## Prowlarr
 
 created an account, and setup my first torrent indexer
 
 we'll come back here with our *arr APIs later
 
-### Radarr, Radarr4k, Sonarr, Sonarr4k
+## Radarr, Radarr4k, Sonarr, Sonarr4k
 
 The general idea here is to launch the webUI, grab the API key from settings, general, go back to Prowlarr and setup the apps, then go back and work through each.
 
