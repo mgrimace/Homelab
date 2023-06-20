@@ -12,11 +12,14 @@ My first ever home server setup and installation notes. I don't know what I'm do
 5. [Setup Plex](Plex/PlexLXC.md)
 6. [Setup Arrs and other services in a Docker LXC](Plex/Arrs.md)
 7. Guides for other services:
-   1. [Calibre, Calibre-Web](LXCs/Media_Calibre.md)
-   2. [Home Utilities (e.g., Pi-Hole, Homebridge)](LXCs/Home_Utilities.md)
-   3. [Homepage Dashboard](LXCs/Dashboards_Homepage.md)
-   4. [Game Utilities (e.g., scrape free Steam games)](LXCs/Game_Utilities.md)
+   1. [Calibre, Calibre-Web](Services/Media_Calibre.md)
+   2. [Pi-Hole](Services/Home_Utilities.md)
+   3. [Homepage Dashboard](Services/Dashboards_Homepage.md)
+   4. [Game Utilities (e.g., scrape free Steam games)](Services/Game_Utilities.md)
 8. [Setup a reverse proxy with NGINX, Cloudflare, and Authentik](Network/Reverse.md)
+   1. [Authentik configs for specific services](Network/Authentik_Configs.md)
+   2. [Add and manage users via Plex](Network/Users.md)
+
 
 
 # Overview
