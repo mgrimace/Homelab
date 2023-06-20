@@ -1,18 +1,6 @@
 # General LXC info
 
-This is what I'm using for 'general' LXCs, mounting the shared data, etc., for projects that don't have a pre-built script, or if I don't want to use the pre-built script. I generally start with Ubuntu.
-
-See https://tteck.github.io/Proxmox/ for a variety of pre-built scripts. I use the `Ubuntu` LXC as my starting point. These scripts are entered into your 'node' >_shell (e.g., Proxmox).
-
-## Ubuntu 
-
-Create Ubuntu in an LXC. I use advanced settings and set it to privileged (if I'm mounting media share, otherwise not), and set a static IP addressing with `IP/24`.
-
-```bash
-bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/ubuntu.sh)"
-```
-
-If you're installing multiple Ubuntu LXCs (for various projects) and/or you use the automatic rather than the advanced options for the script, you can set a static IP and change the container name later by visiting the container in proxmox, use the DNS, hostname option to change the name of the container
+General info for managing new LXCs, mounting the shared data, installing Docker, enabling root SSH.
 
 ## Mount media share to your LXC
 
