@@ -70,6 +70,7 @@ Go back to the console, and note your OMV IP address! Mine is `192.168.0.125`
 - Under IPv4, change the method from `DHCP` to `Static` in the dropdown, enter the current IP that you use to access OMV.
 - Enter the netmask (mine is 255.255.255.0)
 - Enter the gateway (mine is 192.168.0.1)
+- Be sure to also enter DNS (I use my router, 192.168.0.1 to forward DNS to my Pi-Hole)
 
 ### Create a new filesystem
 

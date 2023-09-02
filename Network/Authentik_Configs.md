@@ -30,7 +30,7 @@ Add plex to login page
 
 ### Use logged-in plex credentials as SSO for Overseerr
 
-Customization > Property Mappings > Create > Scope Mapping, give it a name (e.g., Plex SSO), and copy/paste the following script, being sure to change `base_url = "http://overseerr:5055"` to your actual local overseerr, for example `base_url = "[http://192.168.xx.yy:5055](http://192.168.xx.yy:5055/)"
+Customization > Property Mappings > Create > Scope Mapping, give it a name (e.g., Plex SSO), and copy/paste the following script, being sure to change `base_url = "http://overseerr:5055"` to your actual local overseerr, for example `base_url = "[http://192.168.xx.yy:5055](http://192.168.xx.yy:5055/)" or https://overseerr.mydomain.com. 
 
 ```
 from authentik.sources.plex.models import PlexSourceConnection

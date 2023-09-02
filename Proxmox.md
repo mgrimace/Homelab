@@ -19,11 +19,10 @@ Use this post install script `bash -c "$(wget -qLO - https://github.com/tteck/Pr
 
 ### Alternatively
 
-Log in from your browser, and select your node (mine's called proxmox), then updates, repositories.
+- Log in from your browser, and select your node (mine's called proxmox), then updates, repositories.
 
-Disable the `enterprise` repository, and add the `pve-no-subscription` repo. Go up to updates, hit refresh and update your system.
+- Disable the `enterprise` repository, and add the `pve-no-subscription` repo. Go up to updates, hit refresh and update your system.
 
-To remove the nag screen, I followed this [guide](https://dannyda.com/2020/05/17/how-to-remove-you-do-not-have-a-valid-subscription-for-this-server-from-proxmox-virtual-environment-6-1-2-proxmox-ve-6-1-2-pve-6-1-2/). Input the following line of code in the shell: `sed -i.backup -z "s/res === null || res === undefined || \!res || res\n\t\t\t.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service`
+- To remove the nag screen, I followed this [guide](https://dannyda.com/2020/05/17/how-to-remove-you-do-not-have-a-valid-subscription-for-this-server-from-proxmox-virtual-environment-6-1-2-proxmox-ve-6-1-2-pve-6-1-2/). Input the following line of code in the shell: `sed -i.backup -z "s/res === null || res === undefined || \!res || res\n\t\t\t.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service`
 
-Clear your browser's caache, then restart your browser. The nag screen should be gone.
-
+- Clear your browser's cache, then restart your browser. The nag screen should be gone.

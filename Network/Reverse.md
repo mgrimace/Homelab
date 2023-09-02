@@ -290,3 +290,12 @@ Follow guide and generate a new SSL origin certificate.
 - change each provder from external host overseerr.old.com -> overserr.new.com
 - change outpost config (open in chrome, not safari, and change from autho.old.com -> auth.new.com)
 
+### Lock-down access to applications to only your IP 
+
+Basically, I want to be able to access certain apps remotely, but only on my devices and not expose them to the public. 
+
+#### Access list on NPM
+
+After setting up reverse proxies and Authentik for all my apps, there's still some apps that I want to acess myself, but not expose to the public. To do this, I am using `access lists` in NPM.
+
+Here, I called it Protected-IP, and went to edit access list. I added my internal/local IP range 192.168.0.0/24, and the 'whats my IP? (in safari)' of my phone while on data as IP/32. I might have to play around with this. As far as I understand it will match the IPs in descending order, so home first, then mobile, and if neither, deny.

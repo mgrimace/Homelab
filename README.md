@@ -9,18 +9,18 @@ My first ever home server setup and installation notes. I don't know what I'm do
 2. [Hardware installation](Hardware.md)
 3. [Proxmox installation and setup](Proxmox.md)
 4. [Open Media Vault installation and setup](OMV.md)
-5. [Setup Plex](Plex/PlexLXC.md)
-6. [Setup Arrs and other services in a Docker LXC](Plex/Arrs.md)
-7. Guides for other services:
+5. [Setup USB backup for the system](#Backups.md)
+6. [Setup Plex](Plex/PlexLXC.md)
+7. [Setup Arrs and other services in a Docker LXC](Plex/Arrs.md)
+8. Guides for other services:
    1. [Calibre, Calibre-Web](Services/Media_Calibre.md)
    2. [Pi-Hole](Services/Home_Utilities.md)
    3. [Homepage Dashboard](Services/Dashboards_Homepage.md)
    4. [Game Utilities (e.g., scrape free Steam games)](Services/Game_Utilities.md)
-8. [Setup a reverse proxy with NGINX, Cloudflare, and Authentik](Network/Reverse.md)
+   5. [Manga](Services/Manga.md)
+9. [Setup a reverse proxy with NGINX, Cloudflare, and Authentik](Network/Reverse.md)
    1. [Authentik configs for specific services](Network/Authentik_Configs.md)
    2. [Add and manage users via Plex](Network/Users.md)
-
-
 
 # Overview
 
@@ -51,13 +51,27 @@ Using Proxmox, the main NVME will host various Virtual Machines (VMs), and Linux
 
 **[Docker LXC]**
 
-- Overseerr + Arrs + qbittorrent
-- Calibre-web
-- Homepage
-- NPM
-- Authentik (redis, postgres, worker, server stack)
+- [Homepage](https://github.com/benphelps/homepage) - dashboard for all the running services
+- Arrs and Qbittorrent - to manage media
+  - [Overseerr](https://overseerr.dev): front-end to handle discovery and requests for new media for the family. Integrates with the arr suite.
+  - [Radarr](https://github.com/Radarr/Radarr): Manages your movie library
+  - [Sonarr](https://github.com/Sonarr/Sonarr): Manages your TV library
+  - [Lidarr](https://github.com/lidarr/Lidarr): Manages your music ilbrary
+  - [Prowlarr](https://github.com/Prowlarr/Prowlarr): Index manager for *arrs
+  - [Bazarr](https://www.bazarr.media): Subtitles companion app
+  - [Readarr](https://github.com/Readarr/Readarr): Book, Magazine, Comics Ebook and Audiobook Manager and Automation
+
+- Calibre-web - manage book library
+- Mealie - recipes
+- Kavita - Manga and Comic server
+  - [Kaizoku](https://github.com/oae/kaizoku) - manage manga 
+  - [Kapowarr](https://casvt.github.io/Kapowarr) - manage comics
+
+- NPM for reverse proxy
+- Authentik (redis, postgres, worker, server stack) for secure logins and single-sign-on to services
 - Dockerproxy
 - Portainer
+- Watchtower
 
 **[Plex LXC]**
 
@@ -68,42 +82,25 @@ Using Proxmox, the main NVME will host various Virtual Machines (VMs), and Linux
 
 - "Bare-metal" Pi-Hole installation
 
-**[Game utils, individual LXCs]**
+**[Bots Docker LXC]**
 
-- MSRewards Bot
-- Epic games Bot - claims free Epic games
-- ArchiSteamFarm + Plugin - claims free Steam games
-- **note:** these are mainly small python scripts on tiny ubuntu LXCs with 256-512 mb ram. More info on each in the comments.
+- [MSRewards Bot](https://github.com/thearyadev/MSRF) - collect daily MS points
+
+- [Epic games Bot](https://github.com/claabs/epicgames-freegames-node) - claims free Epic games
+
+- [ArchisteamFarm](https://github.com/JustArchiNET/ArchiSteamFarm) + this [plugin](https://github.com/maxisoft/ASFFreeGames) - claims free Steam games
+
+- [Tracker auto-login](https://github.com/mastiffmushroom/TrackerAutoLogin) - automatic daily login to useful sites
+
+  
 
 ## Setup Guides and resources
 
 Generally speaking, I'll be using a Ibramenu to handle most of setup for the media-related dockers (e.g., Plex, Arrs). Ibramenu: https://github.com/ibracorp/ibramenu
-
-### Arrs 
-
-The arr suite automatically downloads and organizes your media. The ones I plan to use are:
-
-- [Radarr](https://github.com/Radarr/Radarr): Manages your movie library
-- [Sonarr](https://github.com/Sonarr/Sonarr): Manages your TV library
-- [Lidarr](https://github.com/lidarr/Lidarr): Manages your music ilbrary
-- [Prowlarr](https://github.com/Prowlarr/Prowlarr): Index manager for *arrs
-- [Bazarr](https://www.bazarr.media): Subtitles companion app
-- [Readarr](https://github.com/Readarr/Readarr): Book, Magazine, Comics Ebook and Audiobook Manager and Automation
-
-I also plan to use [Overseerr](https://overseerr.dev) as a front-end to handle discovery and requests for new media for the family. Overseer integrates with the arr suite.
 
 ### Guides
 
 - https://trash-guides.info - details the setup of the various *arr services, as well as hard linking. Hard linking reduces wear and tear on the media drive. 
 - https://youtu.be/p6aSlcbDHqc - youtube videos that detail installing and setting up Plex as a Ubuntu VM. Uses TrueNAS as the NAS, which is overkill for my setup, but the principle should be similar (i.e., create a SMB/CIFS share Media <-> Plex)
 - https://tteck.github.io/Proxmox/ - for homebridge (automation/homebridge) and any other LXCs that have convenient setup scripts (e.g., secondary pi-hole LXC is an option)
-
-### Cool things to try
-
-- [Homepage](https://gethomepage.dev/en/installation/) - a nice visual dashboard of all the things that are running, e.g., proxmox stats, downloads, etc. 
-- Free game scraping bots (likely running together on a light VM):
-  - Epic: https://github.com/claabs/epicgames-freegames-node
-  - Steam: https://github.com/JustArchiNET/ArchiSteamFarm + this plugin: https://github.com/maxisoft/ASFFreeGames
-
-
 
