@@ -2,10 +2,7 @@
 
 [Homepage](https://gethomepage.dev/en/installation/) is a neat way to collect your various service WebUI URLs in one convenient place. 
 
-## Table of contents
-
-1. [Setup](#Setup])
-2. [Sample services.yaml](#services.yaml)
+My homepage configs, compose, and screenshots are found at [services/homepage](/Services/homepage)
 
 ## Setup
 
