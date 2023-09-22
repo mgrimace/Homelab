@@ -48,3 +48,23 @@ Using UUID, the entry will look something like...
 `UUID=063c75bc-bcc6-4fa5-8417-a7987a26dccb /mnt/backups ext4 defaults,noatime,nofail 0 2`
 
 The USB now will be mounted when the system boots up, and can be mounted manually with the mount command if for some reason it disconnects.
+
+## Make sure Proxmox knows the backups directory is an externally managed mount point and consider the storage offline if it isn't mounted
+
+Edit storage.cfg found in /etc/pve/
+
+add
+
+`is mountpoint 1` to the directory, for example:
+
+```
+dir: backups
+	path /mnt/backups
+	content backup,images
+	prune-backups keep-all=1
+	shared 0
+	is_mountpoint 1
+```
+
+
+

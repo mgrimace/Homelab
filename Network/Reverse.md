@@ -296,6 +296,10 @@ Basically, I want to be able to access certain apps remotely, but only on my dev
 
 #### Access list on NPM
 
-After setting up reverse proxies and Authentik for all my apps, there's still some apps that I want to acess myself, but not expose to the public. To do this, I am using `access lists` in NPM.
+After setting up reverse proxies and Authentik for all my apps, there's still some apps that I want to acess myself, but not expose to the public. To do this, I am using [access lists](Access_Lists.md)in NPM.
 
 Here, I called it Protected-IP, and went to edit access list. I added my internal/local IP range 192.168.0.0/24, and the 'whats my IP? (in safari)' of my phone while on data as IP/32. I might have to play around with this. As far as I understand it will match the IPs in descending order, so home first, then mobile, and if neither, deny.
+
+### Home assistant
+
+https://theprivatesmarthome.com/how-to/put-home-assistant-behind-existing-nginx-proxy-manager/
