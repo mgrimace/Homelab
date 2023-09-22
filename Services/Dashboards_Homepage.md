@@ -4,6 +4,10 @@
 
 My homepage configs, compose, and screenshots are found at [services/homepage](/Services/homepage)
 
+<p align="center">
+  <img src="Services/homepage/1.png?v=2" />
+</p>
+
 ## Setup
 
 ### Create a directory
