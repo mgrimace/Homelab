@@ -15,36 +15,6 @@ cd homepage mkdir config
 cd ..
 ```
 
-### Docker Compose file
-
-```dockerfile
-version: "3.3"
-services:
-  homepage:
-    image: ghcr.io/benphelps/homepage:main
-    container_name: homepage
-    ports:
-      - 3000:3000
-    volumes:
-      - /opt/appdata/homepage/config:/app/config # Make sure your local config directory exists
-      - /mnt/media:/media
-    env_file:
-      - /opt/appdata/homepage/.secrets.env
-    environment:
-      PUID: 1000
-      PGID: 1000
-    networks:
-      - homelab
-    restart: unless-stopped
-    security_opt:
-      - apparmor:unconfined
-
-networks:
-  homelab:
-    driver: bridge
-    external: true
-```
-
 ### Create a secrets file
 
 **Note:** I recently added a .secrets.env file. This allows me to keep all my passwords, API keys, and IP addresses out of my services.yaml. 
@@ -62,6 +32,10 @@ HOMEPAGE_VAR_SONARR_KEY=key 2
 ```
 
 You'll use these values, e.g. `{{HOMEPAGE_VAR_PLEX_KEY}}` instead of writing out your Plex key in your configuration file below. Refer the sample services.yaml to see how the labels work. If this doesn't make sense, you can skip this step, and remove the line from the compose file for now then come back to it later.
+
+## Install via docker compose
+
+See my compose, for example: [compose.yaml](/Services/homepage/compose.yaml)
 
 ### Configure Homepage
 
