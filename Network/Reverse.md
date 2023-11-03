@@ -272,7 +272,7 @@ location @goauthentik_proxy_signin {
 ### Some apps require specific setup
 
 - Resource: https://goauthentik.io/integrations/
-- My notes: [Authentik Configs](Authentik_configs.md) 
+- My notes: [Authentik Configs](Authentik_Configs.md) 
 
 ## Change domain?
 
