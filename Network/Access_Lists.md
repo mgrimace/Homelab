@@ -1,11 +1,36 @@
-# Using Access Lists in NPM to only allow access to reverse proxied sites from local connections
+# Local-only subdomains
 
-- When I add a new proxy host, I give it a name, e.g.,service.mydomain.com` then, under SSL I select my cloudflare origin certificate, and check the two top options `force ssl` and `http/2 support`
-- If I select `public` it work, the service will be available publiclly. However, I want to use an access list to make sure that I can only reach it from connections from my IP (e.g., my local network), or specific IPs
-- I created an access list that has my local network allowed `192.168.0.0/16`. I also tried adding my router external IP from ipchicken.com
-- In PiHole, I added `service.mydomain.com` and set its IP to my *NPM* local IP.
-- In PiHole, under settings / DNS, deselect (uncheck) the options `never forward non-FQDN A and AAAA queries` and `never forward reverse lookups for private IP ranges`.
+You can use access lists in NPM to make some services only work on your local network.
+
+## Basic steps
+
+1. In pi-hole or your DNS host, add a local DNS entry with servicename.mydomain.com pointing to your NPM IP.
+2. In NPM create an access list with the only allowed entry as 192.168.0.0/16, which should be my home network.
+3. In NPM, create a matching host service.mydomain.com with the IP/Port it uses, then apply the new local only access list. Hit save.
+
+## To add SSL (https) to the local-only domain
+
+- In NPM, click on the SSL tab
+- Drop down "None" for encryption and choose "Request a new SSL certificate"
+- Enable "Force SSL", "HTTP/2 Support", "HSTS Enabled", and "Use a DNS challenge"
+- Under "DNS Provider", choose CloudFlare
+- Here you, will need a Cloudflare API token to enter into `credentials file content`
+- In a new tab, visit Cloudflare, profile, create token: `use Template`, select `edit zone dns`
+  - under permissions, + Add more with the options: `zone, zone, read`
+  - under Zone resources, selected my domain in the far right field, 
+  - Set the TTL as long as you like, then probably set yourself a reminder for when it expires.
+- Click Continue to Summary at the bottom
+- Click Create token
+- Click Copy on your API token
+- Back in NPM, under `Credentials file content`, change the token to the token you copied from the CloudFlare page
+- Enter your email at the bottom and agree to the terms
+- Click Save
+
+## Troubleshooting
+
+- First, use a private/incognito tab to visit the site if you've been making changes in NPM, sometimes the current browser needs to clear the cache/restart for changes to take effect.
 - If you have two piholes (primary, secondary) ensure that the your local DNS records are in sync (e.g., using gravity-sync)
+- In PiHole, under settings / DNS, deselect (uncheck) the options `never forward non-FQDN A and AAAA queries` and `never forward reverse lookups for private IP ranges`.
 - Then, be sure to use the Flush DNS Cache option in Pi-Hole settings. 
 - On Mac computers, use the following terminal command to flush the DNS cache:
 
@@ -14,3 +39,6 @@ sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
 ```
 
 **Note:** Adding Authentik appears to supercede this, and will allow  access to the proxy host, but of course with Authentik authentication.
+
+
+

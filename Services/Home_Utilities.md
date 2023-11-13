@@ -23,6 +23,6 @@ Since this is my secondary PiHole (my first lives on separate hardware), I want 
 
 on the local machine, go to `cd /etc/gravity-sync`, `cat gravity-sync.rsa.pub` and copy the public address. On the remote machine, go to `~/.ssh`, `nano authorized_keys`, and paste the public key into this file. Then reset the config on the lxc using gravity-sync config. It should now connect. You may have to do this on both machines if you've recreated an LXC and had done this before (i.e., the raspberry pi may have the 'old' ssh key still installed).
 
-## Install Unboud 
+## Install Unbound 
 
 Follow the official directions: https://docs.pi-hole.net/guides/dns/unbound/
