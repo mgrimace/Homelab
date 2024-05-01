@@ -1,0 +1,149 @@
+name: "networking"
+
+########################### THIS COMPOSE FILE
+# This compose file contains network-related apps
+# - Authentik
+# - NPM
+
+### ANCHORS
+# - The following achors serve as my baseline info that is included in most of my containers
+# - Default behaviour is to include all entries below '&home-lab-default' by adding <<: *homelab-default to each container 
+# - To add additional env args and labels to a container, I can still use the defaults with <<: &env and <<: &labels, then add additional entries 
+
+x-app: &homelab-default 
+  restart: unless-stopped
+  security_opt:
+    - apparmor:unconfined
+  networks:
+    - homelab
+  environment: &env
+    PUID: ${PUID}
+    PGID: ${PGID}
+    TZ: ${TZ}
+    TP_THEME: organizr
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+
+### SERVICES
+services:
+
+### NETWORKING
+  ## AUTHENTICATION 
+  postgresql:
+    #description: the following stack is Authenik, which provides user authentication and SSO for reverse proxy, available at IP:9000
+    <<: *homelab-default
+    image: docker.io/library/postgres:12-alpine
+    container_name: authentik-postgres
+    env_file:
+      - ./.authentik.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      <<: *env
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_USER: ${PG_USER:-authentik}
+      POSTGRES_DB: ${PG_DB:-authentik}
+    labels: 
+      com.centurylinklabs.watchtower.enable: "false" 
+  redis:
+    <<: *homelab-default
+    image: docker.io/library/redis:alpine
+    command: --save 60 1 --loglevel warning
+    container_name: authentik-redis
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    volumes:
+      - redis:/data
+    labels:
+      com.centurylinklabs.watchtower.enable: "false" 
+  server:
+    <<: *homelab-default
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.4.1}
+    container_name: authentik-server
+    command: server
+    env_file:
+      - ./.authentik.env
+    environment:
+      <<: *env
+      AUTHENTIK_REDIS__HOST: authentik-redis
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgres
+      AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
+      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+    volumes:
+      - ${DOCKERDIR}/appdata/authentik/media:/media
+      - ${DOCKERDIR}/appdata/authentik/custom-templates:/templates   
+    ports:
+      - "${COMPOSE_PORT_HTTP:-9000}:9000"
+      - "${COMPOSE_PORT_HTTPS:-9443}:9443"
+    depends_on:
+      - postgresql
+      - redis
+    labels:
+      com.centurylinklabs.watchtower.enable: "false" 
+  worker:
+    <<: *homelab-default
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.4.1}
+    container_name: authentik-worker
+    command: worker
+    env_file:
+      - ./.authentik.env    
+    environment:
+      <<: *env
+      AUTHENTIK_REDIS__HOST: authentik-redis
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgres
+      AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
+      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+    user: root
+    volumes:
+      - ${DOCKERDIR}/appdata/authentik/media:/media
+      - ${DOCKERDIR}/appdata/authentik/certs:/certs
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKERDIR}/appdata/authentik/custom-templates:/templates
+    labels:
+      com.centurylinklabs.watchtower.enable: "false" 
+
+  ## PROXY
+  npm:
+    # Description: NPM reverse proxy
+    <<: *homelab-default
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: npm
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ${DOCKERDIR}/appdata/npm/data:/data
+      - ${DOCKERDIR}/appdata/npm/letsencrypt:/etc/letsencrypt
+      - ${DOCKERDIR}/appdata/themepark/98-themepark-nginx-proxy-manager:/etc/cont-init.d/98-themepark/ #this must be manually added, see download script
+    networks: #make all networks visible to npm, and add them below to ### NETWORKS as well
+      - homelab
+      - skynet
+
+#### VOLUMES
+volumes:
+  database:
+    driver: local
+  redis:
+    driver: local
+
+#### NETWORKS
+networks:
+  homelab:
+    driver: bridge
+    external: true
+  skynet:
+    driver: bridge
+    external: true

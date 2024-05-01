@@ -1,106 +1,110 @@
-# Homelab
-My first ever home server setup and installation notes. I don't know what I'm doing. No one should follow these steps under any circumstances. Please feel free to contribute suggestions and advice.
-
-**NB:** This is a work in progress
-
-## Table of contents
-
-1. [Overview](#Overview])
-2. [Hardware installation](Hardware.md)
-3. [Proxmox installation and setup](Proxmox.md)
-4. [Open Media Vault installation and setup](OMV.md)
-5. [Setup USB backup for the system](#Backups.md)
-6. [Setup Plex](Plex/PlexLXC.md)
-7. [Setup Arrs and other services in a Docker LXC](Plex/Arrs.md)
-8. Guides for other services:
-   1. [Calibre, Calibre-Web](Services/Media_Calibre.md)
-   2. [Pi-Hole](Services/Home_Utilities.md)
-   3. [Homepage Dashboard](Services/Dashboards_Homepage.md)
-   4. [Game Utilities (e.g., scrape free Steam games)](Services/Game_Utilities.md)
-   5. [Manga](Services/Manga.md)
-9. [Setup a reverse proxy with NGINX, Cloudflare, and Authentik](Network/Reverse.md)
-   1. [Authentik configs for specific services](Network/Authentik_Configs.md)
-   2. [Add and manage users via Plex](Network/Users.md)
-
 # Overview
 
-## Goals
+These are my install notes for creating my homelab. The goal is a low-power, always-on media server, which will use the *arr suite to automate obtaining and organizing media, alongside Overseerr as a front-end to handle requests from the family. Along the way, I have added a dashboard, networking including reverse proxy and authentication, and various useful home services (e.g., home assistant, vaultwarden, calibre, pi-hole, etc.). All docker services are setup using docker compose, and all composes are provided.
 
-### Primary goal
+## Overview
 
-Create a small, low-power, always-on Plex server, which will use the *arr suite to automate obtaining and organizing media, alongside Overseerr as a front-end to handle requests for media from the family. Various other services will be added as well (e.g., Calibre, Pi-Hole, Home Assistant, etc.)
+```bash
+Home Server: Micro Lenovo M920Q, I7-8700T, 32gb RAM
+│
+└── Proxmox (Host System)
+    │   ├── Storage
+    │   │   └── 512GB NVME (Used by VMs and Containers)
+    │   │   
+    ├── Virtual Machines
+    │   ├── OMV (OpenMediaVault) NAS
+    │   │   └── Shares
+    │   │       └── 2TB SSD (Shared as media storage to LXC Containers via SMB/CIFS)
+    │   │   
+    └── LXC Containers
+        ├── Pi-Hole (DNS adblocking)
+        ├── Home Assistant (Smart devices and automation)
+        ├── Scrypted (Doorbell and security cameras)
+        ├── Vaultwarden (Family passwords)
+        ├── Docker (Main Docker Services)
+        └── Plex (Media Server with iGPU passthrough)
+```
 
-## The hardware
+## Guides
 
-Micro Lenovo M920Q, I7-8700T, 16gb RAM, 512GB NVME (main), 2TB 2.5" SSD (media)
+Initial setup
 
-## The plan
+1. [Setup Proxmox.md](Setup Proxmox.md) 
+2. [Setup OMV.md](Setup OMV.md) 
+3. [Setup Docker services.md](Setup Docker services.md) 
+4. [Create Plex LXC.md](Create Plex LXC.md) 
+5. [Setup Themepark.md](Setup Themepark.md) 
+6. [Setup System Backups.md](Setup System Backups.md) 
 
-Using Proxmox, the main NVME will host various Virtual Machines (VMs), and Linux Containers (LXCs). One VM in particular will function as a network accessible storage (NAS) operating system (OS) to share the second attached SSD media drive to the VMs and over the network. 
+Network and reverse proxying
 
-**[Storage VM]**
+1. [Setup Networking.md](Setup Networking.md) 
+2. [Create Local Subdomains with SSL.md](Create Local Subdomains with SSL.md)  
+3. [App specific configs for Authentik.md](App specific configs for Authentik.md) 
 
-- Open Media Vault (OMV) VM to share 2TB SSD media drive via SMB/CIFS to containers and as NAS
+## Lay summary
 
-**[Home Assistant OS VM]**
+Using Proxmox, the main NVME storage hosts various Virtual Machines (VMs), and Linux Containers (LXCs). Broadly speaking, LXCs share host resources and will be preferred over VMs, which reserve the resources that are allocated to them (whether they need them or not). One VM in particular will function as a network accessible storage (NAS) operating system (OS) to share the second attached SSD media drive to the LXCs and over the network. 
 
-- Home Assistant (supervised version for add-ons)
-- Docker-wyze-bridge
-- Scrypted
-- **note**: OS versions for "supervised" since my doorbell (wyze) needs the bridge and scrypted to be added to HomeKit. HA has replaced Homebridge for me for HomeKit integration.
+Open Media Vault (OMV) will be used share 2TB SSD media drive via SMB/CIFS to containers and as NAS. OMV functions best as a VM in this setup.
 
-**[Docker LXC]**
+The majority of my apps are going to be in the Docker LXC. These will be setup using docker compose.yaml files, which I've grouped based on function.  
 
-- [Homepage](https://github.com/benphelps/homepage) - dashboard for all the running services
-- Arrs and Qbittorrent - to manage media
-  - [Overseerr](https://overseerr.dev): front-end to handle discovery and requests for new media for the family. Integrates with the arr suite.
-  - [Radarr](https://github.com/Radarr/Radarr): Manages your movie library
-  - [Sonarr](https://github.com/Sonarr/Sonarr): Manages your TV library
-  - [Lidarr](https://github.com/lidarr/Lidarr): Manages your music ilbrary
-  - [Prowlarr](https://github.com/Prowlarr/Prowlarr): Index manager for *arrs
-  - [Bazarr](https://www.bazarr.media): Subtitles companion app
-  - [Readarr](https://github.com/Readarr/Readarr): Book, Magazine, Comics Ebook and Audiobook Manager and Automation
+## List of Docker Services
 
-- Calibre-web - manage book library
-- Mealie - recipes
-- Kavita - Manga and Comic server
-  - [Kaizoku](https://github.com/oae/kaizoku) - manage manga 
-  - [Kapowarr](https://casvt.github.io/Kapowarr) - manage comics
+These are the current docker services that I'm using in my homelab. They are deployed using docker compose, and organized into logical 'stacks'. All compose files can be found in the [compose](compose) folder.
 
-- NPM for reverse proxy
-- Authentik (redis, postgres, worker, server stack) for secure logins and single-sign-on to services
-- Dockerproxy
-- Portainer
-- Watchtower
+```bash
+Apps
+  - homepage
+  - NTFY
+  - iSponsorBlockTV
+  - Mealie
+  - Wallos
 
-**[Plex LXC]**
+Books
+  - Calibre
+  - Calibre-web
+  - Readarr
 
-- "Bare-metal" Plex installation
-- **note**: separate from Docker stack so I don't interrupt my family viewing when messing around with other services
+Bots
+  - Epic free-game claimer
+  - ArchiSteamFarm steam free-game claimer
+  - Twitch prime and GOG free-game claimer
+  - Tracker auto-login
 
-**[Pi-Hole LXC]**
+Manga
+  - Kavita
+  - Kapowarr
+  - Komf
+  - Tranga
 
-- "Bare-metal" Pi-Hole installation
+Media
+  - Overseer
+  - Prowlarr
+  - qBittorrent
+  - Radarr/Radarr4k
+  - Sonarr/Sonarr4k
+  - Stash
+  - Tautuli
+  - Unpackerr
+  - Watcharr
 
-**[Bots Docker LXC]**
+Networking
+  - Authentik
+  - NPM
 
-- [MSRewards Bot](https://github.com/thearyadev/MSRF) - collect daily MS points
+System
+  - Dockerproxy
+  - Dockge
+  - Portainer
+  - PGadmin
+  - Uptime-Kuma
+  - Watchtower
+```
 
-- [Epic games Bot](https://github.com/claabs/epicgames-freegames-node) - claims free Epic games
+# Support this project
 
-- [ArchisteamFarm](https://github.com/JustArchiNET/ArchiSteamFarm) + this [plugin](https://github.com/maxisoft/ASFFreeGames) - claims free Steam games
+If you found my work here at all helpful, please consider donating whatever you can at the link below. I do my best to keep things up to date and as beginner-friendly as possible, and this is all done in my spare time. Thank you and take good care.
 
-- [Tracker auto-login](https://github.com/mastiffmushroom/TrackerAutoLogin) - automatic daily login to useful sites
-
-  
-
-## Setup Guides and resources
-
-Generally speaking, I'll be using a Ibramenu to handle most of setup for the media-related dockers (e.g., Plex, Arrs). Ibramenu: https://github.com/ibracorp/ibramenu
-
-### Guides
-
-- https://trash-guides.info - details the setup of the various *arr services, as well as hard linking. Hard linking reduces wear and tear on the media drive. 
-- https://youtu.be/p6aSlcbDHqc - youtube videos that detail installing and setting up Plex as a Ubuntu VM. Uses TrueNAS as the NAS, which is overkill for my setup, but the principle should be similar (i.e., create a SMB/CIFS share Media <-> Plex)
-- https://tteck.github.io/Proxmox/ - for homebridge (automation/homebridge) and any other LXCs that have convenient setup scripts (e.g., secondary pi-hole LXC is an option)
-
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=R4QX73RWYB3ZA)

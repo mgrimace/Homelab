@@ -1,0 +1,83 @@
+name: "bots"
+
+########################### THIS COMPOSE FILE
+# This compose file contains a number of useful 'bots' that I use for collecting free games and points
+# - Epic freegames
+# - Steam freegames, via ASF
+# - Twitch prime and GOG
+# - Tracker autologin
+
+### ANCHORS
+# - The following achors serve as my baseline info that is included specifically for my bots
+# - Default behaviour is to include all entries below '&bot-default' by adding <<: *bot-default to each container 
+# - To add additional env args and labels to a container, I can still use the defaults with <<: &env and <<: &labels, then add additional entries 
+
+x-app-bot: &bot-default 
+  restart: unless-stopped
+  security_opt:
+    - apparmor:unconfined
+  networks:
+    - skynet
+  environment: &env
+    PUID: ${PUID}
+    PGID: ${PGID}
+    TZ: ${TZ}
+    TP_THEME: organizr
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+
+### SERVICES
+services:
+
+  ## FREE GAME CLAIMERS
+  archisteamfarm:
+    #description: Steam card farmer, used to farm free games as well via a plugin
+    <<: *bot-default
+    container_name: asf
+    image: justarchi/archisteamfarm:released
+    ports:
+      - 1242:1242
+    volumes:
+      - ${DOCKERDIR}/appdata/asf/config:/app/config
+      - ${DOCKERDIR}/appdata/asf/plugins:/app/plugins/custom
+
+  epicgames-freegames:
+    #description: Claims epic free games
+    <<: *bot-default
+    image: ghcr.io/claabs/epicgames-freegames-node:latest
+    container_name: epic
+    volumes:
+      - ${DOCKERDIR}/appdata/epic/config:/usr/app/config
+    ports:
+      - 3003:3000
+    environment:
+      - COUNTRY_CODE=CA
+
+  free-games-claimer:
+    #description: claims free games on Twitch, GOG, and others
+    <<: *bot-default
+    container_name: fgc
+    image: ghcr.io/vogler/free-games-claimer
+    build: .  
+    ports:
+      - 6080:6080
+    env_file:
+      - ./.fgc.env
+    volumes:
+      - ${DOCKERDIR}/appdata/fgc:/fgc/data #your config file location
+    command: bash -c "node prime-gaming; node gog; echo sleeping; sleep 1d; docker restart fgc" #add node epic; if you want to try epic again
+
+  ##TRACKER AUTOLOGIN
+  trackerautologin:
+    #description: automatically logs into torrent tracker (or other sites) daily for points, etc.
+    <<: *bot-default
+    container_name: trackerautologin
+    image: mastiffmushroom/trackerautologin
+    volumes:
+      - ${DOCKERDIR}/appdata/trackerautologin/config/:/app/config/ 
+
+#### NETWORKS
+networks:
+  skynet:
+    driver: bridge
+    external: true

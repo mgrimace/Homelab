@@ -1,0 +1,96 @@
+name: "manga"
+
+########################### THIS COMPOSE FILE
+# This compose file contains Manga-related apps
+# - Kavita
+# - Kapowarr
+# - Komf
+# - Tranga
+
+### ANCHORS
+# - The following achors serve as my baseline info that is included in most of my containers
+# - Default behaviour is to include all entries below '&home-lab-default' by adding <<: *homelab-default to each container 
+# - To add additional env args and labels to a container, I can still use the defaults with <<: &env and <<: &labels, then add additional entries 
+
+x-app: &homelab-default 
+  restart: unless-stopped
+  security_opt:
+    - apparmor:unconfined
+  networks:
+    - homelab
+  environment: &env
+    PUID: ${PUID}
+    PGID: ${PGID}
+    TZ: ${TZ}
+    TP_THEME: organizr
+  labels: &labels
+    diun.enable: "true"
+    com.centurylinklabs.watchtower.enable: "true"
+
+### SERVICES
+services:
+
+  ## MANGA
+  kavita:
+    #description: Comic and Manga Library
+    <<: *homelab-default
+    image: jvmilazz0/kavita:latest 
+    container_name: kavita
+    volumes:
+      - ${MEDIADIR}/media/manga:/manga 
+      - ${MEDIADIR}/media/comics:/comics 
+      - ${DOCKERDIR}/appdata/kavita/config:/kavita/config
+    ports:
+      - 5000:5000 
+  
+  kapowarr:
+    <<: *homelab-default
+    #description: organizer and downloader for comic books
+    container_name: kapowarr
+    image: mrcas/kapowarr:latest
+    volumes:
+      - ${DOCKERDIR}/appdata/kapowarr/kapowarr-db:/app/db
+      - ${MEDIADIR}/torrents/comics:/app/temp_downloads
+      - ${MEDIADIR}/media/manga:/manga
+      - ${MEDIADIR}/media/comics:/comics
+    ports:
+      - 5656:5656
+
+  komf:
+    #description: Manga metadata manager
+    <<: *homelab-default
+    image: sndxr/komf:latest
+    container_name: komf
+    volumes:
+      - ${DOCKERDIR}/appdata/komf:/config
+    ports:
+      - 8085:8085
+    environment:
+      <<: *env
+      KOMF_KAVITA_BASE_URI: "http://kavita:5000"
+      KOMF_KAVITA_API_KEY: "${KOMF_KAVITA_API_KEY}"
+
+  tranga-api:
+    #description: organizer and downloader for Manga
+    <<: *homelab-default
+    image: glax/tranga-api:latest
+    container_name: tranga-api
+    volumes:
+      - ${DOCKERDIR}/appdata/tranga:/usr/share/tranga-api
+      - ${MEDIADIR}/media/manga:/Manga
+    ports:
+      - "6531:6531"
+  tranga-website:
+    <<: *homelab-default
+    image: glax/tranga-website:latest
+    container_name: tranga-website
+    ports:
+      - "9555:80"
+    depends_on:
+      - tranga-api
+
+#### NETWORKS
+networks:
+  homelab:
+    driver: bridge
+    external: true

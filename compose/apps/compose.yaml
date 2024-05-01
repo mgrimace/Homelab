@@ -1,0 +1,121 @@
+name: "apps"
+
+########################### THIS COMPOSE FILE
+# This compose file contains my dashboard and useful utilities
+# - Homepage
+# - NTFY 
+# - iSponsorblockTV
+# - Mealie
+# - Wallos
+
+### ANCHORS
+# - The following achors serve as my baseline info that is included in most of my containers
+# - Default behaviour is to include all entries below '&home-lab-default' by adding <<: *homelab-default to each container 
+# - To add additional env args and labels to a container, I can still use the defaults with <<: &env and <<: &labels, then add additional entries 
+
+x-app: &homelab-default 
+  restart: unless-stopped
+  security_opt:
+    - apparmor:unconfined
+  networks:
+    - homelab
+  environment: &env
+    PUID: ${PUID}
+    PGID: ${PGID}
+    TZ: ${TZ}
+    TP_THEME: organizr
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+
+### SERVICES
+services:
+
+  ##HOUSEHOLD
+  iSponsorBlockTV:
+    <<: *homelab-default
+    #description: blocks ads and skips sponsored Youtube segments on smart TVs
+    image: ghcr.io/dmunozv04/isponsorblocktv
+    container_name: iSponsorBlockTV
+    volumes:
+      - ${DOCKERDIR}/appdata/isponsorblocktv:/app/data
+
+  mealie:
+    <<: *homelab-default
+    #description: recipe manager
+    image: ghcr.io/mealie-recipes/mealie:latest
+    container_name: mealie
+    ports:
+      - 9925:9000
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    volumes:
+      - ${DOCKERDIR}/appdata/mealie:/app/data
+    environment:
+      <<: *env
+      ALLOW_SIGNUP: "true"
+      BASE_URL: "${MEALIE_URL}"
+      MAX_WORKERS: "1"
+      WEB_CONCURRENCY: "1"
+      SMTP_HOST: "${SMTP_HOST}"
+      SMTP_PORT: "${SMTP_PORT}"
+      SMTP_FROM_NAME: "Mealie"
+      SMTP_AUTH_STRATEGY: "TLS"
+      SMTP_FROM_EMAIL: "${SMTP_FROM_EMAIL}"
+      SMTP_USER: "${SMTP_USER}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD}"
+
+  wallos:
+    #description: subscription manager useful for tracking recurring bills and payments
+    <<: *homelab-default
+    container_name: wallos
+    image: bellamy/wallos:latest
+    ports:
+      - 8282:80/tcp
+    volumes:
+      - ${DOCKERDIR}/appdata/wallos/db:/var/www/html/db
+      - ${DOCKERDIR}/appdata/wallos/logos:/var/www/html/images/uploads/logos
+  
+  ## UTILITIES
+  homepage:
+    # description: my preferred dashboard, available at IP:3000
+    <<: *homelab-default
+    image: ghcr.io/gethomepage/homepage:main
+    container_name: homepage
+    env_file:
+      - ./.homepage.env    
+    ports:
+      - 3000:3000
+    volumes:
+      - ${DOCKERDIR}/appdata/homepage/config:/app/config
+
+  ntfy:
+    #description: notification service used by containers
+    <<: *homelab-default
+    image: binwiederhier/ntfy
+    container_name: ntfy
+    command:
+      - serve
+    environment:
+      <<: *env
+      NTFY_UPSTREAM_BASE_URL: https://ntfy.sh
+      NTFY_CACHE_FILE: /var/lib/ntfy/cache.db
+      NTFY_AUTH_FILE: /var/lib/ntfy/auth.db
+      NTFY_AUTH_DEFAULT_ACCESS: deny-all
+      NTFY_BEHIND_PROXY: true
+      NTFY_ATTACHMENT_CACHE_DIR: /var/lib/ntfy/attachments
+      NTFY_ENABLE_LOGIN: true
+      NTFY_BASE_URL: ${NTFY_BASE_URL}
+    volumes:
+      - ${DOCKERDIR}/appdata/ntfy/var/cache/ntfy:/var/cache/ntfy
+      - ${DOCKERDIR}/appdata/ntfy/etc/ntfy:/etc/ntfy
+      - ${DOCKERDIR}/appdata/ntfy:/var/lib/ntfy
+    ports:
+      - 8150:80
+
+### NETWORKS
+networks:
+  homelab:
+    driver: bridge
+    external: true
