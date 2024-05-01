@@ -29,18 +29,18 @@ Home Server: Micro Lenovo M920Q, I7-8700T, 32gb RAM
 
 Initial setup
 
-1. [Setup Proxmox.md](#Setup_Proxmox.md) 
-2. [Setup OMV.md](#Setup_OMV.md) 
-3. [Setup Docker services.md](#Setup_Docker_services.md) 
-4. [Create Plex LXC.md](#Create_Plex_LXC.md) 
-5. [Setup Themepark.md](#Setup_Themepark.md) 
-6. [Setup System Backups.md](#Setup_System_Backups.md) 
+1. [Setup Proxmox.md](Setup Proxmox.md) 
+2. [Setup OMV.md](Setup OMV.md) 
+3. [Setup Docker services.md](Setup Docker services.md) 
+4. [Create Plex LXC.md](Create Plex LXC.md) 
+5. [Setup Themepark.md](Setup Themepark.md) 
+6. [Setup System Backups.md](Setup System Backups.md) 
 
 Network and reverse proxying
 
-1. [Setup Networking.md](#Setup_Networking.md) 
-2. [Create Local Subdomains with SSL.md](#Create_Local_Subdomains_with_SSL.md)  
-3. [App specific configs for Authentik.md](#App_specific_configs_for_Authentik.md) 
+1. [Setup Networking.md](Setup Networking.md) 
+2. [Create Local Subdomains with SSL.md](Create Local Subdomains with SSL.md)  
+3. [App specific configs for Authentik.md](App specific configs for Authentik.md) 
 
 ## Lay summary
 
