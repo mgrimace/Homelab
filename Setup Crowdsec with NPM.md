@@ -1,6 +1,8 @@
 # Setup Crowdsec with NPM in Docker
 
-We will be setting up Crowdsec in docker to work with our existing NPM setup. We will do this mainly by swapping my default /networking/compose.yaml with /networking/crowdsec-compose.yaml that I created found in [compose/networking](compose/networking). It is based on the official resource found [here](https://github.com/crowdsecurity/example-docker-compose/tree/main/npm). I made this brief guide because the other resources (e.g., YouTube, blog posts) are out of date or missing key steps.
+We will be setting up Crowdsec in docker to work with our existing NPM setup. We will do this mainly by swapping my default /networking/compose.yaml with /networking/crowdsec-compose.yaml that I created, and can be found in [compose/networking](compose/networking). Note, skip down to #PROXY in the compose file if you don't want Authentik. Both NPM and Crowdsec need to be updated in your own compose for this to work.
+
+This compose file is based on the official resource found [here](https://github.com/crowdsecurity/example-docker-compose/tree/main/npm). I made this brief guide because the other resources (e.g., YouTube, blog posts) are out of date or missing key steps.
 
 The following steps will work with an existing NPM setup. However, a few preparations steps are required first, and some minor changes after to make sure our port doesn't confict with qbittorrent.
 
