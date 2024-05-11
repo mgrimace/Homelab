@@ -71,6 +71,7 @@ You can also confirm its running by using `docker exec -it crowdsec cscli metric
 - go to crowdsec/config/notifications and create a new file called `ntfy.yaml`, paste and customize the following:
 
 ```yaml
+type: http  # Don't change
 name: ntfy  # Must match the registered plugin in the profile
 
 log_level: info
