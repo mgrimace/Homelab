@@ -41,6 +41,7 @@ Home Server: Micro Lenovo M920Q, I7-8700T, 32gb RAM
 - [Setup Networking](Setup%20Networking.md)
 - [Create Local Subdomains with SSL](Create%20Local%20Subdomains%20with%20SSL.md)
 - [App specific configs for Authentik](App%20specific%20configs%20for%20Authentik.md)
+- Optional:  [Setup Crowdsec with NPM.md](Setup%20Crowdsec%20with%20NPM.md) 
 
 ## Lay summary
 
