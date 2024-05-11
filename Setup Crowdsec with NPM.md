@@ -65,3 +65,40 @@ Restart Crowdsec with `docker start crowdsec`.
 visit app.crowdsec.com and confirm your new system. You should see here your new Security Engine with 1 remediation component and a number of scenarios. You can and should add some blocklists here too (I picked three and set the default to 'ban'). 
 
 You can also confirm its running by using `docker exec -it crowdsec cscli metrics` and amking sure you see some npm logs in 'acquisition metrics' with lines read.
+
+## Optional: add NTFY notifications
+
+- go to crowdsec/config/notifications and create a new file called `ntfy.yaml`, paste and customize the following:
+
+```yaml
+name: ntfy  # Must match the registered plugin in the profile
+
+log_level: info
+
+format: |
+  {{range . -}}
+  {{$alert := . -}}
+  {{range .Decisions -}}
+  {
+    "topic": "CrowdSec",
+    "message": "{{$alert.Source.IP}} will get a {{.Type}} for the next {{.Duration}}.",
+    "title": "{{ Hostname }}: {{.Scenario}}",
+    "tags": ["{{ $alert.Source.Cn | lower }}"],
+    "priority": 4,
+    "click": "https://shodan.io/host/{{$alert.Source.IP}}"
+  }
+  {{end -}}
+  {{end -}}
+
+
+# The plugin will make requests to this url, eg: https://ntfy.sh/ (if self-hosted, change to your domain)
+url: https://ntfy.<yourdomain>.com/security
+
+method: POST
+
+headers:
+  Authorization: Basic <your basic token> #If using a restricted topic
+```
+
+- Then, go to /crowdsec/config and edit `profiles.yaml`, uncomment notifications and add the line ` - notify` underneath it, save, exit. Restart Crowdsec with `docker restart crowdsec`
+- Make sure to subscribe to /security in ntfy!
