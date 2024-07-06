@@ -19,24 +19,39 @@ Also, set this (and all vms) as static IPs in your router.
 
 Use the handy Proxmox post-install Tteck script. Enter it into the node >_shell: `bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"` 
 
-### Optional: updating system BIOS and firmware from the Proxmox CLI
-
-I'm using https://github.com/fwupd/fwupd which is descirbed as making firmware updates on Linux safe and reliable. Be sure to back everything up first. This should update the system and any attached devices (e.g., SSDs, etc.) - basically anything with firmware submitted to the Linux Vendor Firmware Service 
-
-### Installation
-
-1. In the Proxmox Node >_shell: `apt install fwupd`
-2. Then, `fwupdmgr get-devices`
-3. `fwupdmgr refresh`
-4. `fwupdmgr get-updates`
-5. `fwupdmgr update`
-6. Reboot
-
-### Optional: Idle power saving
+### Idle power saving
 
 Use the TTECK script to set your scaling governor to power-save: `bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/scaling-governor.sh)"`
 
 Use `apt install powertop` to install powertop, then run `powertop --auto-tune` to set additional powersaving states for your processor. This must be re-run on reboot, but can be set with cron.
+
+cron entry for auto-tune: `@reboot sleep 60 && /usr/sbin/powertop --auto-tune`
+
+### Install Glances
+
+I simply refer to this guide which describes the process clearer than I can: https://www.derekseaman.com/2023/04/home-assistant-monitor-proxmox-with-glances.html
+
+After installing glances on proxmox, for my SSD/network share to show up, in the Proxmox node shell enter:
+
+```bash
+cd ~/.config/glances
+nano glances.conf
+```
+
+Then add the following line:
+
+```bash
+[fs]
+allow=cifs
+```
+
+Optionally, add other filesystems depending on your network shares.
+
+Save and exit, then `systemctl restart glances.service`
+
+### Disable SWAP on LXCs
+
+For some reason, certain apps and services on my LXCs use swap despite having free memory available, resulting in slow performance and wear and tear on my drive. Technically, I'm not disabling swap, just setting it to only use swap as a last resort. To do so, in the Proxmox node shell: `nano /etc/sysctl.conf` and add the line `vm.swappiness=0`
 
 ### Optional: setup iGPU passthrough for LXCs (return later after creating an LXC)
 
@@ -74,5 +89,4 @@ and edit the compose in plex docker:
    devices:
        - /dev/dri:/dev/dri 
    ```
-
 
