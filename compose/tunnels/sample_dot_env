@@ -1,0 +1,17 @@
+#### SYSTEM
+PUID=1000 
+PGID=1000
+TZ=America/Toronto
+
+#### DIRECTORIES
+USERDIR=/home/username
+DOCKERDIR=/home/username/docker
+SECRETSDIR=/home/username/docker/secrets
+MEDIADIR=/mnt/media
+
+#### CLOUDFLARE
+TUNNEL_TOKEN=
+
+### LINKSTACK
+ADMIN_EMAIL=
+SERVER_NAME=
