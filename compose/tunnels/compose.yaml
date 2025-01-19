@@ -1,0 +1,52 @@
+name: "tunnels"
+
+########################### THIS COMPOSE FILE
+# This compose file contains services that are tunnelled by CloudFlare
+
+### ANCHORS
+# - The following anchors serve as my baseline info that is included in most of my containers
+# - Default behavior is to include all entries below '&home-lab-default' by adding <<: *homelab-default to each container 
+# - To add additional env args and labels to a container, I can still use the defaults with <<: &env and <<: &labels, then add additional entries 
+
+x-app: &tunnels-default 
+  restart: unless-stopped
+  networks:
+    - tunnels
+  environment: &env
+    TZ: ${TZ}
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+
+services:
+
+  cloudflared: 
+      <<: *tunnels-default
+      image: cloudflare/cloudflared 
+      container_name: cloudflare-tunnel 
+      command: tunnel run 
+      environment: 
+        - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+
+  linkstack:
+    <<: *tunnels-default
+    hostname: linkstack
+    image: linkstackorg/linkstack:latest
+    container_name: linkstack
+    environment:
+      <<: *env
+      SERVER_ADMIN: ${ADMIN_EMAIL}
+      HTTP_SERVER_NAME: ${SERVER_NAME}
+      HTTPS_SERVER_NAME: ${SERVER_NAME}
+      LOG_LEVEL: 'info'
+      PHP_MEMORY_LIMIT: '256M'
+      UPLOAD_MAX_FILESIZE: '8M'
+    volumes:
+      - ${DOCKERDIR}/appdata/linkstack:/htdocs
+      - ${DOCKERDIR}/appdata/certificates:/etc/ssl/apache2
+    ports:
+      - 8190:443
+
+networks:
+  tunnels:
+    driver: bridge
+    external: true
