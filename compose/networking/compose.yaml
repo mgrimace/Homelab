@@ -4,6 +4,7 @@ name: "networking"
 # This compose file contains network-related apps
 # - Authentik
 # - NPM
+# - Crowdsec + Blocklist
 
 ### ANCHORS
 # - The following achors serve as my baseline info that is included in most of my containers
@@ -13,7 +14,7 @@ name: "networking"
 x-app: &homelab-default 
   restart: unless-stopped
   security_opt:
-    - apparmor:unconfined
+    - no-new-privileges=true
   networks:
     - homelab
   environment: &env
@@ -32,7 +33,7 @@ services:
   postgresql:
     #description: the following stack is Authenik, which provides user authentication and SSO for reverse proxy, available at IP:9000
     <<: *homelab-default
-    image: docker.io/library/postgres:12-alpine
+    image: docker.io/library/postgres:16-alpine
     container_name: authentik-postgres
     env_file:
       - ./.authentik.env
@@ -49,8 +50,8 @@ services:
       POSTGRES_PASSWORD: ${PG_PASS}
       POSTGRES_USER: ${PG_USER:-authentik}
       POSTGRES_DB: ${PG_DB:-authentik}
-    labels: 
-      com.centurylinklabs.watchtower.enable: "false" 
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
   redis:
     <<: *homelab-default
     image: docker.io/library/redis:alpine
@@ -65,16 +66,17 @@ services:
     volumes:
       - redis:/data
     labels:
-      com.centurylinklabs.watchtower.enable: "false" 
+      - "com.centurylinklabs.watchtower.enable=false"
   server:
     <<: *homelab-default
-    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.4.1}
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.4.1}
     container_name: authentik-server
     command: server
     env_file:
       - ./.authentik.env
     environment:
       <<: *env
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
       AUTHENTIK_REDIS__HOST: authentik-redis
       AUTHENTIK_POSTGRESQL__HOST: authentik-postgres
       AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
@@ -87,19 +89,22 @@ services:
       - "${COMPOSE_PORT_HTTP:-9000}:9000"
       - "${COMPOSE_PORT_HTTPS:-9443}:9443"
     depends_on:
-      - postgresql
-      - redis
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     labels:
-      com.centurylinklabs.watchtower.enable: "false" 
+      - "com.centurylinklabs.watchtower.enable=false"
   worker:
     <<: *homelab-default
-    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2024.4.1}
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.4.1}
     container_name: authentik-worker
     command: worker
     env_file:
       - ./.authentik.env    
     environment:
       <<: *env
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
       AUTHENTIK_REDIS__HOST: authentik-redis
       AUTHENTIK_POSTGRESQL__HOST: authentik-postgres
       AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
@@ -111,19 +116,43 @@ services:
       - ${DOCKERDIR}/appdata/authentik/certs:/certs
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DOCKERDIR}/appdata/authentik/custom-templates:/templates
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy    
     labels:
-      com.centurylinklabs.watchtower.enable: "false" 
-
+      - "com.centurylinklabs.watchtower.enable=false" 
+  pgadmin:
+    #description: manage PostgreSQL Dabases
+    <<: *homelab-default
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+    ports:
+      - 5050:80
+    restart: always
+    volumes:
+      - ${DOCKERDIR}/appdata/pgadmin:/var/lib/pgadmin #requires user to run: sudo chown -R 5050:5050 ${DOCKERDIR}/appdata/pgadmin
   ## PROXY
   npm:
     # Description: NPM reverse proxy
     <<: *homelab-default
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'lepresidente/nginxproxymanager:latest'
     container_name: npm
     ports:
       - '80:80'
       - '81:81'
       - '443:443'
+    environment:
+      <<: *env
+      #note, API_URL port must match below, changed from 8080 to 8888 due to qbittorrent
+      CROWDSEC_OPENRESTY_BOUNCER: |
+        ENABLED=true
+        API_URL=http://crowdsec:8888
+        API_KEY=${CROWDSEC_BOUNCER_APIKEY}
     volumes:
       - ${DOCKERDIR}/appdata/npm/data:/data
       - ${DOCKERDIR}/appdata/npm/letsencrypt:/etc/letsencrypt
@@ -131,6 +160,23 @@ services:
     networks: #make all networks visible to npm, and add them below to ### NETWORKS as well
       - homelab
       - skynet
+      - homefinance
+  crowdsec:
+    #description: Crowdsec security for NPM
+    <<: *homelab-default
+    image: docker.io/crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    environment:
+      - COLLECTIONS=crowdsecurity/nginx-proxy-manager crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
+      - ENROLL_KEY=${ENROLL_KEY}
+      - ENROLL_INSTANCE_NAME=homelab
+    volumes:
+      - ${DOCKERDIR}/appdata/crowdsec/data:/var/lib/crowdsec/data/
+      - ${DOCKERDIR}/appdata/crowdsec/config:/etc/crowdsec/
+      - ${DOCKERDIR}/appdata/npm/data/logs/:/var/log/npm:ro
+    ports:
+      - 8888:8080 #match above
+      - 6060:6060
 
 #### VOLUMES
 volumes:
@@ -145,5 +191,8 @@ networks:
     driver: bridge
     external: true
   skynet:
+    driver: bridge
+    external: true
+  homefinance:
     driver: bridge
     external: true

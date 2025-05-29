@@ -4,7 +4,7 @@ name: "system"
 # This compose file contains docker and system management utilities
 # - Dockerproxy
 # - Dockge
-# - Portainer
+# - Dozzle
 # - PGadmin
 # - Uptime-kuma
 # - Watchtower
@@ -17,9 +17,12 @@ name: "system"
 x-app: &homelab-default 
   restart: unless-stopped
   security_opt:
-    - apparmor:unconfined
+    - no-new-privileges=true
   networks:
     - homelab
+    - skynet
+    - homefinance
+    - tunnels
   environment: &env
     PUID: ${PUID}
     PGID: ${PGID}
@@ -62,31 +65,31 @@ services:
       <<: *env
       DOCKGE_STACKS_DIR: ${DOCKERDIR}/compose
 
-  pgadmin:
-    #description: manage my Authentik Dabase
+  dozzle:
+    # description: https://github.com/amir20/dozzle
     <<: *homelab-default
-    container_name: pgadmin
-    image: dpage/pgadmin4:latest
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9991:8080
     environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
-    ports:
-      - 5050:80
-    restart: always
-    volumes:
-      - ${DOCKERDIR}/appdata/pgadmin:/var/lib/pgadmin #requires user to run: sudo chown -R 5050:5050 ${DOCKERDIR}/appdata/pgadmin
+      <<: *env
+      DOZZLE_REMOTE_HOST: tcp://${LAB_ASSISTANT}:2375|labassistant,tcp://${ORACLE}:2375|oracle,tcp://{BOTS}:2375|bots
+      DOZZLE_HOSTNAME: homelab
 
-  portainer:
+  #portainer:
     # description: alternate docker manager, this is the BE version (free for 2 nodes, requires sign-up)
-    <<: *homelab-default
-    image: portainer/portainer-ee:latest
-    container_name: portainer
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${DOCKERDIR}/appdata/portainer-data:/data
-    ports:
-      - 9001:9000
+    #<<: *homelab-default
+    #image: portainer/portainer-ee:latest
+    #container_name: portainer
+    #volumes:
+    #  - /etc/localtime:/etc/localtime:ro
+    #  - /var/run/docker.sock:/var/run/docker.sock:ro
+    #  - ${DOCKERDIR}/appdata/portainer-data:/data
+    #ports:
+    #  - 9001:9000
 
   uptime-kuma:
     #description: monitor docker and service uptime
@@ -123,8 +126,17 @@ services:
     ports:
       - 8090:8080
 
-### NETWORKS
+#### NETWORKS
 networks:
   homelab:
+    driver: bridge
+    external: true
+  skynet:
+    driver: bridge
+    external: true
+  homefinance:
+    driver: bridge
+    external: true
+  tunnels:
     driver: bridge
     external: true

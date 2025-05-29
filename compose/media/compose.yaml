@@ -6,6 +6,7 @@ name: "media"
 # - Prowlarr
 # - qBittorrent
 # - Radarr/Radarr4k
+# - Recyclarr
 # - Sonarr/Sonarr4k
 # - Stash
 # - Tautulli
@@ -20,7 +21,7 @@ name: "media"
 x-app: &homelab-default 
   restart: unless-stopped
   security_opt:
-    - apparmor:unconfined
+    - no-new-privileges=true
   networks:
     - homelab
   environment: &env
@@ -29,13 +30,21 @@ x-app: &homelab-default
     TZ: ${TZ}
     TP_THEME: organizr
   labels: &labels
-    diun.enable: "true"
     com.centurylinklabs.watchtower.enable: "true"
 
 ### SERVICES
 services:
 
-  ### ARRS
+  jellyseerr:
+    #description: https://github.com/fallenbagel/jellyseerr
+    <<: *homelab-default
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    volumes:
+      - ${DOCKERDIR}/appdata/jellyseerr:/app/config
+    ports:
+      - 5056:5055
+
   overseerr:
     #description: webui for media requests
     <<: *homelab-default
@@ -45,11 +54,19 @@ services:
       - ${DOCKERDIR}/appdata/overseerr:/config
     ports:
       - 5055:5055
-  
+
+  plextraktsync:
+    #description: https://github.com/linuxserver-labs/docker-plextraktsync
+    <<: *homelab-default
+    image: lscr.io/linuxserver-labs/plextraktsync:latest
+    container_name: plextraktsync
+    volumes:
+      - ${DOCKERDIR}/appdata/plextraktsync/config:/config
+
   prowlarr:
     #description: manage indexers for arr suite
     <<: *homelab-default
-    image: lscr.io/linuxserver/prowlarr:develop
+    image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     volumes:
       - ${DOCKERDIR}/appdata/prowlarr:/config
@@ -109,7 +126,15 @@ services:
     environment:
       <<: *radarrenv
       TP_ADDON: radarr-4k-logo
-  
+
+  recyclarr:
+    #description: sync, TRaSH guide quality profiles; https://recyclarr.dev/
+    <<: *homelab-default
+    container_name: recyclarr
+    image: ghcr.io/recyclarr/recyclarr
+    volumes:
+      - ${DOCKERDIR}/appdata/recyclarr/config:/config
+
   sonarr: &sonarr 
     #description: organizer and downloader for TV shows
     <<: *homelab-default
@@ -179,6 +204,8 @@ services:
     <<: *homelab-default
     image: golift/unpackerr
     container_name: unpackerr
+    volumes:
+      - ${MEDIADIR}:/media
     env_file:
       - ./.unpackerr.env
   

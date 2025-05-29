@@ -2,21 +2,20 @@ name: "apps"
 
 ########################### THIS COMPOSE FILE
 # This compose file contains my dashboard and useful utilities
+# - Code Server
 # - Homepage
 # - NTFY 
-# - iSponsorblockTV
 # - Mealie
-# - Wallos
 
 ### ANCHORS
-# - The following achors serve as my baseline info that is included in most of my containers
-# - Default behaviour is to include all entries below '&home-lab-default' by adding <<: *homelab-default to each container 
+# - The following anchors serve as my baseline info that is included in most of my containers
+# - Default behavior is to include all entries below '&home-lab-default' by adding <<: *homelab-default to each container 
 # - To add additional env args and labels to a container, I can still use the defaults with <<: &env and <<: &labels, then add additional entries 
 
 x-app: &homelab-default 
   restart: unless-stopped
   security_opt:
-    - apparmor:unconfined
+    - no-new-privileges=true
   networks:
     - homelab
   environment: &env
@@ -30,54 +29,65 @@ x-app: &homelab-default
 ### SERVICES
 services:
 
-  ##HOUSEHOLD
-  iSponsorBlockTV:
+  code-server:
     <<: *homelab-default
-    #description: blocks ads and skips sponsored Youtube segments on smart TVs
-    image: ghcr.io/dmunozv04/isponsorblocktv
-    container_name: iSponsorBlockTV
-    volumes:
-      - ${DOCKERDIR}/appdata/isponsorblocktv:/app/data
-
-  mealie:
-    <<: *homelab-default
-    #description: recipe manager
-    image: ghcr.io/mealie-recipes/mealie:latest
-    container_name: mealie
-    ports:
-      - 9925:9000
-    deploy:
-      resources:
-        limits:
-          memory: 1000M
-    volumes:
-      - ${DOCKERDIR}/appdata/mealie:/app/data
+    #description: https://docs.linuxserver.io/images/docker-code-server/
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
     environment:
       <<: *env
-      ALLOW_SIGNUP: "true"
-      BASE_URL: "${MEALIE_URL}"
-      MAX_WORKERS: "1"
-      WEB_CONCURRENCY: "1"
-      SMTP_HOST: "${SMTP_HOST}"
-      SMTP_PORT: "${SMTP_PORT}"
-      SMTP_FROM_NAME: "Mealie"
-      SMTP_AUTH_STRATEGY: "TLS"
-      SMTP_FROM_EMAIL: "${SMTP_FROM_EMAIL}"
-      SMTP_USER: "${SMTP_USER}"
-      SMTP_PASSWORD: "${SMTP_PASSWORD}"
-
-  wallos:
-    #description: subscription manager useful for tracking recurring bills and payments
-    <<: *homelab-default
-    container_name: wallos
-    image: bellamy/wallos:latest
-    ports:
-      - 8282:80/tcp
+      DEFAULT_WORKSPACE: /appdata #optional
     volumes:
-      - ${DOCKERDIR}/appdata/wallos/db:/var/www/html/db
-      - ${DOCKERDIR}/appdata/wallos/logos:/var/www/html/images/uploads/logos
-  
+      - ${DOCKERDIR}/appdata/code-server/config:/config
+      - ${DOCKERDIR}/appdata:/appdata
+      - ${DOCKERDIR}/compose:/compose
+    ports:
+      - 8443:8443
+
   ## UTILITIES
+  #dash:
+  #  #description: https://getdashdot.com
+  #  <<: *homelab-default
+  #  container_name: dashdot    
+  #  image: mauricenino/dashdot:latest
+  #  privileged: true
+  #  ports:
+  #    - 3333:3001
+  #  volumes:
+  #    - /:/mnt/host:ro
+
+  flatnotes:
+    <<: *homelab-default
+    container_name: flatnotes
+    image: dullage/flatnotes:latest
+    environment:
+      <<: *env
+      FLATNOTES_AUTH_TYPE: "none" #change to totp if tunneling
+      #FLATNOTES_USERNAME: "user" #enable password details if tunneling
+      #FLATNOTES_PASSWORD: "changeMe!"
+      #FLATNOTES_SECRET_KEY: "aLongRandomSeriesOfCharacters"
+    volumes:
+      - ${MEDIADIR}/notes:/data
+      # Optional. Allows you to save the search index in a different location: 
+      - ${DOCKERDIR}/appdata/flatnotes/index:/data/.flatnotes
+    ports:
+      - 8383:8080
+
+  glance:
+    <<: *homelab-default
+    image: glanceapp/glance
+    container_name: glance
+    env_file:
+      - ./.homepage.env
+    volumes:
+      - ${DOCKERDIR}/appdata/glance:/app/config
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${MEDIADIR}/backups:/mnt/media:ro
+    ports:
+      - 8088:8080
+
   homepage:
     # description: my preferred dashboard, available at IP:3000
     <<: *homelab-default
@@ -89,7 +99,8 @@ services:
       - 3000:3000
     volumes:
       - ${DOCKERDIR}/appdata/homepage/config:/app/config
-
+      - ${DOCKERDIR}/appdata/homepage/images:/app/public/images
+      
   ntfy:
     #description: notification service used by containers
     <<: *homelab-default
@@ -107,6 +118,8 @@ services:
       NTFY_ATTACHMENT_CACHE_DIR: /var/lib/ntfy/attachments
       NTFY_ENABLE_LOGIN: true
       NTFY_BASE_URL: ${NTFY_BASE_URL}
+      #NTFY_LOG_LEVEL: debug
+      #NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS: 
     volumes:
       - ${DOCKERDIR}/appdata/ntfy/var/cache/ntfy:/var/cache/ntfy
       - ${DOCKERDIR}/appdata/ntfy/etc/ntfy:/etc/ntfy

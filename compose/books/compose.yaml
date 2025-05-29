@@ -14,7 +14,7 @@ name: "books"
 x-app: &homelab-default 
   restart: unless-stopped
   security_opt:
-    - apparmor:unconfined
+    - no-new-privileges=true
   networks:
     - homelab
   environment: &env
@@ -44,7 +44,7 @@ services:
       - 9090:9090
   
   calibre-web:
-    #descrtion: webUI for library and host for kobo-sync
+    #description: webUI for library and host for kobo-sync
     <<: *homelab-default
     image: ghcr.io/linuxserver/calibre-web
     container_name: calibre-web
@@ -58,17 +58,17 @@ services:
     ports:
       - 8083:8083
   
-  readarr:
+  #readarr:
     #description: book organizer and downloader
-    <<: *homelab-default
-    image: ghcr.io/hotio/readarr
-    container_name: readarr
-    volumes:
-      - ${DOCKERDIR}/appdata/readarr:/config
-      - ${MEDIADIR}/media/books:/books
-      - ${MEDIADIR}/torrents/books:/downloads
-    ports:
-      - 8787:8787
+    #<<: *homelab-default
+    #image: ghcr.io/hotio/readarr
+    #container_name: readarr
+    #volumes:
+    #  - ${DOCKERDIR}/appdata/readarr:/config
+    #  - ${MEDIADIR}/media/books:/books
+    #  - ${MEDIADIR}/torrents/books:/downloads
+    #ports:
+    #  - 8787:8787
 
 ### NETWORKS
 networks:

@@ -37,6 +37,19 @@ You'll likely need to clear your DNS cache in Pi-Hole and on the computer/device
 sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
 ```
 
+## A note for Firefox and Pi-Hole users
+
+Firefox may give various errors when browsing to your .local site. To fix:
+
+On Pi-Hole
+- Create a file in /etc/dnsmasq.d. I called it 20-override-https-rr.conf
+- Add a line for each domain in the form with the specific numbers and sytax as follows: `dns-rr=https://service.local.example.com,65,000100`
+- [Update for Pihole V6] In the /etc/pihole/pihole.toml configuration file, change the setting misc.etc_dnsmasq_d to true
+`Should FTL load additional dnsmasq configuration files from /etc/dnsmasq.d/?
+etc_dnsmasq_d = true
+`
+- Then restart pihole `pihole restartdns`
+
 ## Troubleshooting Safari
 
 Safari may give you errors browsing to your local sites, where Chrome and Firefox will appear to work fine. This is intensely frustrating. Here's my understanding of the issue, and the solution after working it through:

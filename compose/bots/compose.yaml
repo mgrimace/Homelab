@@ -3,6 +3,7 @@ name: "bots"
 ########################### THIS COMPOSE FILE
 # This compose file contains a number of useful 'bots' that I use for collecting free games and points
 # - Epic freegames
+# - Itch.io freegames
 # - Steam freegames, via ASF
 # - Twitch prime and GOG
 # - Tracker autologin
@@ -15,7 +16,7 @@ name: "bots"
 x-app-bot: &bot-default 
   restart: unless-stopped
   security_opt:
-    - apparmor:unconfined
+    - no-new-privileges=true
   networks:
     - skynet
   environment: &env
@@ -30,6 +31,19 @@ x-app-bot: &bot-default
 services:
 
   ## FREE GAME CLAIMERS
+  asfclaim:
+    <<: *bot-default
+    image: ghcr.io/c4illin/asfclaim:master
+    container_name: asfclaim
+    depends_on: 
+      - archisteamfarm # remove this if asf is not running in docker
+    environment: # all are optional, defaults are listed below
+      - ASF_PORT=1242
+      - ASF_HOST=asf
+      - ASF_PASSWORD=${ASF_PASSWORD}
+      - ASF_COMMAND_PREFIX=!
+      - ASF_HTTPS=false
+      - ASF_BOTS=asf # see https://github.com/JustArchiNET/ArchiSteamFarm/wiki/Commands#bots-argument
   archisteamfarm:
     #description: Steam card farmer, used to farm free games as well via a plugin
     <<: *bot-default
@@ -50,8 +64,6 @@ services:
       - ${DOCKERDIR}/appdata/epic/config:/usr/app/config
     ports:
       - 3003:3000
-    environment:
-      - COUNTRY_CODE=CA
 
   free-games-claimer:
     #description: claims free games on Twitch, GOG, and others
@@ -66,6 +78,26 @@ services:
     volumes:
       - ${DOCKERDIR}/appdata/fgc:/fgc/data #your config file location
     command: bash -c "node prime-gaming; node gog; echo sleeping; sleep 1d; docker restart fgc" #add node epic; if you want to try epic again
+
+  iSponsorBlockTV:
+    <<: *bot-default
+    #description: blocks ads and skips sponsored YouTube segments on smart TVs
+    image: ghcr.io/dmunozv04/isponsorblocktv
+    container_name: iSponsorBlockTV
+    volumes:
+      - ${DOCKERDIR}/appdata/isponsorblocktv:/app/data  
+
+  itchclaim:
+    #description: https://github.com/Smart123s/ItchClaim
+    <<: *bot-default
+    container_name: itchclaim
+    image: ghcr.io/smart123s/itchclaim
+    volumes:
+      - ${DOCKERDIR}/appdata/itchclaim:/data
+    environment:
+      - ITCH_USERNAME=${ITCH_USERNAME}
+      - ITCH_PASSWORD=${ITCH_PASSWORD}
+    command: ["schedule", "--cron", "28 0,6,12,18 * * *"]
 
   ##TRACKER AUTOLOGIN
   trackerautologin:
