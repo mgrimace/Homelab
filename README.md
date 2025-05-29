@@ -94,13 +94,10 @@ These are the current services that I'm using in my homelab. They are mainly dep
 
 - **[C4illin/ASFclaim](https://github.com/C4illin/ASFclaim)** – ArchiSteamFarm Steam claimer  
 - **[JustArchiNET/ArchiSteamFarm](https://github.com/JustArchiNET/ArchiSteamFarm)** – Steam idler and free-game claimer  
-- **[JonBunator/Enterr](https://github.com/JonBunator/Enterr)** – Auto-login to websites (alt. tracker support)  
 - **[Smart123s/ItchClaim](https://github.com/Smart123s/ItchClaim)** – Itch.io free-game claimer  
 - **[claabs/epicgames-freegames-node](https://github.com/claabs/epicgames-freegames-node)** – Epic free games notifier and claimer  
 - **[mastiffmushroom/TrackerAutoLogin](https://github.com/mastiffmushroom/TrackerAutoLogin)** – Auto-login to trackers  
 - **[maxisoft/ASFFreeGames](https://github.com/maxisoft/ASFFreeGames)** – ASF plugin to auto-claim Steam free games  
-- **[nurupo/twitch-prime-offer-claimer](https://github.com/nurupo/twitch-prime-offer-claimer)** – Auto-claim Twitch Prime loot  
-- **[Revadike/epicgames-freebies-claimer](https://github.com/Revadike/epicgames-freebies-claimer)** – Epic free games claimer  
 - **[vogler/free-games-claimer](https://github.com/vogler/free-games-claimer)** – Claims free games from Epic Games, Amazon Prime, GOG  
 
 ---
