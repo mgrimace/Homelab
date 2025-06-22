@@ -5,7 +5,19 @@ We're going to create a few-local only subdomains using service.**local.**mydoma
 ## Basic steps
 
 1. In pi-hole or your DNS host, add a local DNS entry with servicename.mydomain.com pointing to your NPM IP.
-2. In NPM, create a matching host service.local mydomain.com with the IP/Port it uses.
+2. Note: You can quickly add a bulk list of domains by editing the pihole.toml, look for:
+```
+  # Array of custom DNS records
+  # Example: hosts = [ "127.0.0.1 mylocal", "192.168.0.1 therouter" ]
+  #
+  # Possible values are:
+  #     Array of custom DNS records each one in HOSTS form: "IP HOSTNAME"
+  hosts = [
+    "IP1 name1",
+    "IP2 name2"
+  ]
+```
+3. In NPM, create a matching host service.local mydomain.com with the IP/Port it uses.
 
 ## To add SSL (https) to the local-only domain
 
@@ -42,12 +54,13 @@ sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
 Firefox may give various errors when browsing to your .local site. To fix:
 
 On Pi-Hole
-- Create a file in /etc/dnsmasq.d. I called it 20-override-https-rr.conf
+- Create a file in `/etc/dnsmasq.d`. I called it `20-override-https-rr.conf`. Note: if in docker, cd to the volume directory e.g., `/home/user/docker/appdata/pihole/etc-dnsmasq.d/`
 - Add a line for each domain in the form with the specific numbers and sytax as follows: `dns-rr=https://service.local.example.com,65,000100`
 - [Update for Pihole V6] In the /etc/pihole/pihole.toml configuration file, change the setting misc.etc_dnsmasq_d to true
-`Should FTL load additional dnsmasq configuration files from /etc/dnsmasq.d/?
+```
+Should FTL load additional dnsmasq configuration files from /etc/dnsmasq.d/?
 etc_dnsmasq_d = true
-`
+```
 - Then restart pihole `pihole restartdns`
 
 ## Troubleshooting Safari
