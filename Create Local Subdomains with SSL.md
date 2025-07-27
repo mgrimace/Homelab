@@ -4,20 +4,23 @@ We're going to create a few-local only subdomains using service.**local.**mydoma
 
 ## Basic steps
 
-1. In pi-hole or your DNS host, add a local DNS entry with servicename.mydomain.com pointing to your NPM IP.
-2. Note: You can quickly add a bulk list of domains by editing the pihole.toml, look for:
+1. In pi-hole or your DNS host, go to local DNS settings, and add a local DNS record, for example npm.local.mydomain.com pointing to your NPM IP (I did an entry for both its IPv4 and IPv6 addresses).
+3. In NPM, create a matching host npm.local.mydomain.com with the npm/Port it uses (e.g., containername/Port or IP/Port).
+4. Then, back in Pi-Hole go back to local DNS settings, and this time add a local CNAME record to point new services (e.g., sonarr.local.mydomain.com) to npm.local.mydomain.com. That way, if you ever change NPM's IP, you don't have to manually change each service's records in Pi-Hole.
+
+Note: You can quickly add a bulk list of domains by editing the pihole.toml, look for:
 ```
-  # Array of custom DNS records
-  # Example: hosts = [ "127.0.0.1 mylocal", "192.168.0.1 therouter" ]
+ # List of CNAME records which indicate that <cname> is really <target>. If the <TTL> is
+  # given, it overwrites the value of local-ttl
   #
   # Possible values are:
-  #     Array of custom DNS records each one in HOSTS form: "IP HOSTNAME"
-  hosts = [
-    "IP1 name1",
-    "IP2 name2"
-  ]
+  #     Array of CNAMEs each on in one of the following forms: "<cname>,<target>[,<TTL>]"
+  cnameRecords = [
+    "sonarr.local.mydomain.com,npm.local.mydomain.com",
+    ...
+  ] ### CHANGED, default = []
+
 ```
-3. In NPM, create a matching host service.local mydomain.com with the IP/Port it uses.
 
 ## To add SSL (https) to the local-only domain
 
