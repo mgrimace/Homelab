@@ -1,0 +1,90 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/en/configs/settings
+
+# Header
+title: homelab
+headerStyle: clean
+Providers:
+  openweathermap: openweathermapapikey
+  weatherapi: weatherapiapikey
+
+#Global Settings
+statusStyle: 'basic'
+background: /images/background.jpg
+cardBlur: xl
+iconStyle: theme
+
+layout:
+# Top of every page
+  #Glances:
+    #style: row
+    #columns: 4
+    #header: false
+## Media
+  Media:
+    tab: Main
+  Apps:
+    tab: Main
+  Downloads:
+    tab: Main 
+  Libraries:
+    #icon: mdi-library
+    tab: Main
+    style: row
+    columns: 3
+## Tracking
+  Tracking:
+    tab: Tracking
+    header: false
+    style: row
+    columns: 4
+  Arr Support:
+    tab: Tracking
+    style: row
+    columns: 3
+## Tab - Apps
+  Applications:
+    tab: Apps
+    style: row
+    columns: 3
+    header: false
+    Finances:
+      style: row
+      columns: 2
+      Shopping:
+        header: false
+      Budgeting:
+        header: false
+    Coding:
+      style: row
+      columns: 3
+  Automation:
+    tab: Apps
+    style: row
+    columns: 3 
+    #header: false
+    Bots:
+      style: row
+      columns: 2
+  Bots:
+    style: row
+    columns: 3
+  Minecraft:
+    tab: Apps
+    style: row
+    columns: 4
+
+## Tab - System
+  Server:
+    tab: System
+    style: row
+    columns: 3
+    header: false
+  Networking:
+    tab: System
+    style: row
+    columns: 3
+
+Bookmarks:
+  initiallycollapsed: true

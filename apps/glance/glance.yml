@@ -1,0 +1,218 @@
+theme:
+  presets:
+    neon-focus:
+      background-color: 255 14 6
+      primary-color: 156 50 65
+      negative-color: 342 65 65
+      contrast-multiplier: 0.9
+      text-saturation-multiplier: 0.8
+
+    gruvbox-dark:
+      background-color: 0 0 16
+      primary-color: 43 59 81
+      positive-color: 61 66 44
+      negative-color: 6 96 59
+
+    catppuccin-macchiato:
+      background-color: 232 23 18
+      contrast-multiplier: 1.2
+      primary-color: 220 83 75
+      positive-color: 105 48 72
+      negative-color: 351 74 73
+
+    peachy:
+      light: true
+      background-color: 28 40 77
+      primary-color: 155 100 20
+      negative-color: 0 100 60
+      contrast-multiplier: 1.1
+      text-saturation-multiplier: 0.5
+
+pages:
+  - name: Startpage
+    width: slim
+    #hide-desktop-navigation: true
+    center-vertically: true
+    columns:
+      - size: full
+        widgets:
+          - type: search
+            hide-header: true
+            seach-engine: duckduckgo
+            autofocus: true
+            new-tab: true
+          - type: server-stats
+            hide-header: true
+            servers:
+              - type: local
+                name: Homelab
+                hide-swap: true
+                hide-mountpoints-by-default: true
+                mountpoints:
+                  "/mnt/media":
+                    hide: false
+                    name: media
+          #- type: docker-containers
+          #  hide-by-default: false
+          - type: monitor
+            cache: 1m
+            title: Services
+            hide-header: true
+            sites:
+              #- title: Plex
+              #  url: http://${HOMEPAGE_VAR_PLEX_IP}:32400/web
+              #  icon: sh:plex
+              - title: Overseerr
+                url: http://${HOMEPAGE_VAR_SERVER_IP}:5055
+                icon: sh:overseerr
+              - title: To-Do
+                url: https://todo.${HOMEPAGE_VAR_DOMAIN}
+                icon: sh:vikunja
+              - title: Notes
+                url: http://${HOMEPAGE_VAR_SERVER_IP}:8383
+                icon: sh:flatnotes              
+              #- title: qBittorrent
+              #  url: http://${HOMEPAGE_VAR_SERVER_IP}:8080
+              #  icon: sh:qbittorrent
+              #- title: Sonarr (TV)
+              #  url: http://${HOMEPAGE_VAR_SERVER_IP}:8989
+              #  icon: sh:sonarr
+              #- title: Radarr (Movies)
+              #  url: http://${HOMEPAGE_VAR_SERVER_IP}:7878
+              #  icon: sh:radarr          
+              #- title: Calibre-web
+              #  url: https://calibreweb.${HOMEPAGE_VAR_DOMAIN}
+              #  icon: sh:calibre-web
+          - type: split-column
+            max-columns: 3
+            widgets:
+              - type: bookmarks
+                hide-header: true
+                groups:
+                  - title: Homelab
+                    links:
+                      - title: TTECK
+                        url: https://community-scripts.github.io/ProxmoxVE/
+                      - title: Z-Lib
+                        url: https://1lib.sk/
+                      - title: Mobilism
+                        url: https://forum.mobilism.org/index.php
+                  - title: Work
+                    links:
+                      - title: UB Hub
+                        url: https://myub.buffalo.edu/
+                      - title: UB Learns
+                        url: https://ublearns.buffalo.edu/d2l/home
+                      - title: UB Box
+                        url: https://buffalo.app.box.com/
+              - type: calendar
+                hide-header: true
+                first-day-of-week: sunday
+              - type: weather
+                hide-header: true
+                units: metric
+                hour-format: 12h
+                location: Saint Catharines, Canada
+
+              #- type: change-detection
+              #  title: change detection
+              #  instance-url: http://${HOMEPAGE_VAR_CHANGE_IP}:5000
+              #  token: ${CHANGE_KEY}
+
+  - name: News
+    width: slim
+    #hide-desktop-navigation: true
+    center-vertically: true
+    columns:
+      - size: full
+        widgets:
+          - type: split-column
+            max-columns: 3
+            widgets:
+              - type: releases
+                repositories:
+                  - julian-alarcon/prospect-mail
+                  - fosrl/pangolin
+                  - madeofpendletonwool/PinePods
+                  - janeczku/calibre-web
+                  - TheNetsky/Microsoft-Rewards-Script
+                  - yokoffing/Betterfox        
+                  - gitlab:crafty-controller/crafty-4
+                  - koush/scrypted
+                  - Simonwep/ocular
+                  - jellyfin/jellyfin
+                  - dani-garcia/vaultwarden
+                  - ratgdo/homekit-ratgdo
+                  - javedh-dev/tracktor
+                  - chrisvel/tududi
+                  - crocodilestick/Calibre-Web-Automated
+              - type: repository
+                title: Netsky
+                repository: TheNetsky/Microsoft-Rewards-Script
+              - type: repository
+                title: Pinepods
+                repository: madeofpendletonwool/PinePods
+
+  - name: Stocks
+    width: slim
+    center-vertically: true
+    columns:
+      - size: full
+        widgets:
+          - type: markets
+            hide-header: true
+            markets:
+              - symbol: AVCR.V
+                name: Avricore Health
+              - symbol: BES.V
+                name: Braille Energy Systems
+              - symbol: BIOV.CN
+                name: BioVaxys Technology
+              - symbol: BPAI.CN
+                name: BrandPilot AI
+              - symbol: BTCW.V
+                name: Bitcoin Well
+              - symbol: CALM.CN
+                name: Revitalist Lifestyle and Wellness
+              - symbol: COCO.V
+                name: Coast Copper Corp
+              - symbol: ESE.V
+                name: ESE entertainment
+              - symbol: EVNI.V
+                name: EV Nickle
+              - symbol: FIND.V
+                name: Baseload Energy
+              - symbol: GRDM.V
+                name: Grid Metals
+              - symbol: JNH.V
+                name: Jack Nathan Medical
+              - symbol: KLX.V
+                name: Carbon Done Right Dev
+              - symbol: LMR.V
+                name: Lomiko Metals
+              - symbol: LVT.CN
+                name: Levitee Labs
+              - symbol: MGI.V
+                name: Magnum Goldcorp
+              - symbol: NNX.V
+                name: Nickel North Exploration
+              - symbol: NUMI.TO
+                name: Numinous Wellness
+              - symbol: OBRN.CN
+                name: Oberon Uranium
+              - symbol: PHNM.V
+                name: Phenom Metals
+              - symbol: PRIZ.CN
+                name: Prismo Metals
+              - symbol: SSE.V
+                name: Silver Spruce Resources
+              - symbol: THRM.V
+                name: Therma Bright
+              - symbol: TRU.V
+                name: TRU Precious Metals
+              - symbol: VM.V
+                name: Yoyageur Pharma
+              - symbol: WIN.CN
+                name: Windfall Geotek
+
+

@@ -1,0 +1,189 @@
+name: "media"
+
+# ===== THIS COMPOSE FILE =====
+# Services included:
+#   - Overseer
+#   - Prowlarr
+#   - qBittorrent
+#   - Radarr/Radarr4k
+#   - Recyclarr
+#   - Sonarr/Sonarr4k
+#   - Tautulli
+#   - Unpackerr
+#   - Watcharr
+
+# == ANCHORS ==
+# These anchors define baseline configuration applied to most containers.
+# Default behavior:
+#   - Include all entries under '&homelab-default' via <<: *homelab-default
+#   - Additional labels can be added per container using <<: *labels
+
+x-app: &homelab-default 
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges=true
+  networks:
+    - homelab
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+  env_file: &env-files
+    - ../envs/global.env
+    - ../envs/media.env
+
+services:
+
+  jellyseerr:
+    #description: https://github.com/fallenbagel/jellyseerr
+    <<: *homelab-default
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    volumes:
+      - ./jellyseerr:/app/config
+    ports:
+      - 5056:5055
+
+  overseerr:
+    #description: webui for media requests
+    <<: *homelab-default
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    volumes:
+      - ./overseerr:/config
+    ports:
+      - 5055:5055
+
+  plextraktsync:
+    #description: https://github.com/linuxserver-labs/docker-plextraktsync
+    <<: *homelab-default
+    image: lscr.io/linuxserver-labs/plextraktsync:latest
+    container_name: plextraktsync
+    volumes:
+      - ./plextraktsync/config:/config
+
+  prowlarr:
+    #description: manage indexers for arr suite
+    <<: *homelab-default
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    volumes:
+      - ./prowlarr:/config
+    ports:
+      - 9696:9696
+  
+  qbittorrent:
+    #description: torrent client with VPN support
+    <<: *homelab-default
+    image: ghcr.io/hotio/qbittorrent
+    container_name: qbittorrent
+    environment:
+      VPN_ENABLED: "true"
+      VPN_LAN_NETWORK: 192.168.68.0/22
+      VPN_CONF: wg0
+      PRIVOXY_ENABLED: "false"
+      TP_HOTIO: "true"
+    volumes:
+      - ./qbittorrent:/config
+      - /mnt/media:/media
+      - /mnt/stash:/stash
+      - ../themepark/98-themepark-qbittorrent:/etc/cont-init.d/98-themepark/ #this must be manually added, see download script
+    ports:
+      - 8080:8080
+      - 8118:8118
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=1
+    dns:
+      - 1.1.1.1
+  
+  radarr: &radarr #I defined radarr here, so when I use radarr4k, I can avoid repeating
+    #description: organizer and downloader for movies
+    <<: *homelab-default
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    volumes:
+      - ./radarr:/config
+      - /mnt/media:/media
+    ports:
+      - 7878:7878
+    environment: &radarrenv
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:radarr"
+  
+  radarr4k:
+    <<: *radarr
+    container_name: radarr4k
+    volumes:
+      - ./radarr4k:/config
+      - /mnt/media:/media
+    ports:
+      - 7879:7878
+    environment:
+      <<: *radarrenv
+      TP_ADDON: radarr-4k-logo
+
+  recyclarr:
+    #description: sync, TRaSH guide quality profiles; https://recyclarr.dev/
+    <<: *homelab-default
+    container_name: recyclarr
+    image: ghcr.io/recyclarr/recyclarr
+    volumes:
+      - ./recyclarr/config:/config
+
+  sonarr: &sonarr 
+    #description: organizer and downloader for TV shows
+    <<: *homelab-default
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    volumes:
+      - ./sonarr:/config
+      - /mnt/media:/media
+    ports:
+      - 8989:8989
+    environment: &sonarrenv
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:sonarr"
+  
+  sonarr4k:
+    <<: *sonarr
+    container_name: sonarr4k
+    volumes:
+      - ./sonarr4k:/config
+      - /mnt/media:/media
+    ports:
+      - 8990:8989
+    environment: 
+      <<: *sonarrenv
+      TP_ADDON: sonarr-4k-logo
+  
+  tautullli:
+    #descriptoin: stats and mangement for plex
+    <<: *homelab-default
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    volumes:
+      - ./tautulli:/config
+    ports:
+      - 8181:8181
+  
+  unpackerr:
+    #description: automatically unpack zipped or rarred torrents
+    <<: *homelab-default
+    image: golift/unpackerr
+    container_name: unpackerr
+    volumes:
+      - /mnt/media:/media
+  
+  watcharr:
+    #description: track and rate shows and tv to-watch
+    <<: *homelab-default
+    image: ghcr.io/sbondco/watcharr:latest
+    container_name: watcharr
+    ports:
+      - 3080:3080
+    volumes:
+      - ./watcharr:/data
+
+networks:
+  homelab:
+    driver: bridge
+    external: true

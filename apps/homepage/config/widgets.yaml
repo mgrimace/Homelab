@@ -1,0 +1,91 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/en/configs/widgets
+
+- logo:
+    href: https://github.com/gethomepage/homepage/discussions
+- resources:
+    href: http://{{HOMEPAGE_VAR_PROXMOX_IP}}:8006
+    cpu: true
+    memory: true
+    cputemp: true
+    tempmin: 0 # optional, minimum cpu temp
+    tempmax: 100 # optional, maximum cpu temp
+    uptime: false
+    label: homelab
+#- glances:
+#    url: http://{{HOMEPAGE_VAR_PROXMOX_IP}}:61208
+#    username: {{HOMEPAGE_VAR_GLANCES_USER}}
+#    password: {{HOMEPAGE_VAR_GLANCES_PASS}}
+#    version: 4
+#    cputemp: true
+    #uptime: true
+    #disk:
+      #- /mnt/backups
+      #- /mnt/pve/vdisk-nas
+    #expanded: true
+#    href: http://{{HOMEPAGE_VAR_PROXMOX_IP}}:8006
+#    label: homelab
+- glances:
+    version: 4
+    url: http://{{HOMEPAGE_VAR_ORACLE_IP}}:61208
+    username: {{HOMEPAGE_VAR_GLANCES_ORACLE_USER}}
+    password: {{HOMEPAGE_VAR_GLANCES_ORACLE_PASS}}
+    href: https://www.oracle.com/cloud/sign-in.html
+    mem: true
+    #uptime: true
+    label: oracle
+- glances:
+    url: http://{{HOMEPAGE_VAR_ORACLE_IP}}:61208
+    username: {{HOMEPAGE_VAR_GLANCES_ORACLE_USER}}
+    password: {{HOMEPAGE_VAR_GLANCES_ORACLE_PASS}}
+    href: https://www.oracle.com/cloud/sign-in.html
+    version: 4
+    cpu: false
+    mem: false
+    cputemp: false
+    uptime: false
+    disk: /
+    #expanded: true
+    label: Oracle
+- glances:
+    url: http://{{HOMEPAGE_VAR_PROXMOX_IP}}:61208
+    username: {{HOMEPAGE_VAR_GLANCES_USER}}
+    password: {{HOMEPAGE_VAR_GLANCES_PASS}}
+    version: 4
+    cpu: false
+    mem: false
+    cputemp: false
+    uptime: false
+    disk:
+      - /mnt/backups
+    #expanded: true
+    label: backups
+- glances:
+    url: http://{{HOMEPAGE_VAR_PROXMOX_IP}}:61208
+    username: {{HOMEPAGE_VAR_GLANCES_USER}}
+    password: {{HOMEPAGE_VAR_GLANCES_PASS}}
+    version: 4
+    cpu: false
+    mem: false
+    cputemp: false
+    uptime: false
+    disk:
+      - /mnt/pve/vdisk-nas
+    #expanded: true
+    label: NAS
+#- search:
+#    provider: duckduckgo
+#    target: _blank
+#- datetime:
+#      text_size: sm
+#      format:
+#          dateStyle: long
+- openmeteo:
+    label: St. Catharines
+    latitude: 43.17
+    longitude: -79.24
+    units: metric
+    cache: 5
+
+

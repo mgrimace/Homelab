@@ -1,0 +1,635 @@
+- Media:
+    - Plex:
+        icon: sh-plex
+        href: http://{{HOMEPAGE_VAR_PLEX_IP}}:32400/web
+        siteMonitor: http://{{HOMEPAGE_VAR_PLEX_IP}}:32400
+#        widget:
+#            type: plex
+#            url: http://{{HOMEPAGE_VAR_PLEX_IP}}:32400
+#            key: {{HOMEPAGE_VAR_PLEX_KEY}}
+#            fields: ["movies", "tv"]
+        widget:
+            type: tautulli
+            url: http://{{HOMEPAGE_VAR_SERVER_IP}}:8181
+            key: {{HOMEPAGE_VAR_TAUTULLI_KEY}}
+    - Overseerr:
+        icon: sh-overseerr
+        href: http://{{HOMEPAGE_VAR_SERVER_IP}}:5055
+        server: my-docker
+        container: overseerr
+        widget:
+            type: overseerr
+            url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5055
+            key: {{HOMEPAGE_VAR_OVERSEER_KEY}}
+            fields: ["pending", "processing", "available"]
+- Apps:
+    - To-Do:
+        icon: vikunja
+        href: https://todo.{{HOMEPAGE_VAR_DOMAIN}}
+        server: my-docker
+        container: vikunja
+        widget:
+            type: vikunja
+            url: https://todo.{{HOMEPAGE_VAR_DOMAIN}}
+            key: {{HOMEPAGE_VAR_VIKUNJA_API}}
+            enableTaskList: false
+            fields: ["projects", "tasks7d", "tasksOverdue"]
+    - Notes:
+        icon: flatnotes
+        href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8383
+        server: my-docker
+        container: flatnotes   
+
+- Downloads:
+    - qBittorrent:
+        icon: sh-qbittorrent
+        href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8080
+        server: my-docker
+        container: qbittorrent
+        widget:
+            type: qbittorrent
+            url: http://{{HOMEPAGE_VAR_SERVER_IP}}:8080
+            username: {{HOMEPAGE_VAR_QB_USER}}
+            password: {{HOMEPAGE_VAR_QB_PASS}}
+    - TL Auto-Login:
+        icon: https://www.torrentleech.org/favicon.ico
+        href: https://torrentleech.org
+        server: my-docker
+        container: trackerautologin
+                
+- Libraries:
+    - Books:
+        - Calibre-web:
+            icon: sh-calibre-web
+            href: https://calibreweb.{{HOMEPAGE_VAR_DOMAIN}}
+            server: my-docker
+            container: calibre-web-automated
+            widget:
+                type: calibreweb
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:8083
+                username: {{HOMEPAGE_VAR_USER}}
+                password: {{HOMEPAGE_VAR_CALIBRE_PASS}}
+                fields: ["books", "authors", "series"]
+        - Calibre-web Kids:
+            icon: sh-calibre-web
+            href: https://books.{{HOMEPAGE_VAR_DOMAIN}}
+            server: docker-oracle
+            container: calibre-web
+            widget:
+                type: calibreweb
+                url: https://books.{{HOMEPAGE_VAR_DOMAIN}}
+                username: {{HOMEPAGE_VAR_USER}}
+                password: {{HOMEPAGE_VAR_CALIBRE_ORACLE_PASS}}
+                fields: ["books", "authors", "series"]
+    - Manga:
+        - Suwayomi:
+            icon: kaizoku
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:4567
+            server: my-docker
+            container: suwayomi
+            widget:
+              type: suwayomi
+              url: http://{{HOMEPAGE_VAR_SERVER_IP}}:4567
+              fields: ["download", "read", "unread"]
+                  #username: username #optional
+                  #password: password #optional
+                  #category: 0 #optional, defaults to all categories
+        - Suwayomi Kids:
+            icon: kaizoku
+            href: https://suwayomi.{{HOMEPAGE_VAR_LOCAL}}
+            server: my-docker
+            container: suwayomi-kids
+            widget:
+                type: suwayomi
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5678
+                fields: ["download", "read", "unread"]
+                
+- Tracking:
+    - Television:
+        - TV releases:
+            icon: synology-calendar.png
+            widget:
+                type: calendar
+                view: agenda
+                maxEvents: 2
+                integrations:
+                    - type: sonarr
+                      service_group: Television
+                      service_name: Sonarr
+        - Sonarr:
+            icon: sh-sonarr
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8989
+            server: my-docker
+            container: sonarr
+            widget:
+                type: sonarr
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:8989
+                key: {{HOMEPAGE_VAR_SONARR_KEY}}
+                enableQueue: true
+        - Sonarr 4k:
+            icon: sh-sonarr
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8990
+            server: my-docker
+            container: sonarr4k
+            widget:
+                type: sonarr
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:8990
+                key: {{HOMEPAGE_VAR_SONARR_4K_KEY}}
+                enableQueue: true
+    - Movies:
+        - Movie releases:
+            icon: synology-calendar.png
+            widget:
+                type: calendar
+                view: agenda
+                maxEvents: 2
+                integrations:
+                    - type: radarr
+                      service_group: Movies
+                      service_name: Radarr 
+        - Radarr:
+            icon: sh-radarr
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:7878
+            server: my-docker
+            container: radarr
+            widget:
+                type: radarr
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:7878
+                key: {{HOMEPAGE_VAR_RADARR_KEY}}
+                fields: ["wanted", "missing", "movies"]
+        - Radarr 4K:
+            icon: sh-radarr
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:7879
+            server: my-docker
+            container: radarr4k
+            widget:
+                type: radarr
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:7879
+                key: {{HOMEPAGE_VAR_RADARR_4K_KEY}}
+                fields: ["wanted", "missing", "movies"]
+    - Jelly:
+        - Jellyfin:
+            icon: jellyfin
+            href: http://{{HOMEPAGE_VAR_JELLYFIN_IP}}:8096
+            siteMonitor: http://{{HOMEPAGE_VAR_JELLYFIN_IP}}:8096
+            widget:
+                type: jellyfin
+                url: http://{{HOMEPAGE_VAR_JELLYFIN_IP}}:8096
+                key: {{HOMEPAGE_VAR_JELLYFIN_API}}
+                enableBlocks: true # optional, defaults to false
+                enableNowPlaying: true # optional, defaults to true
+                enableUser: true # optional, defaults to false
+                showEpisodeNumber: true # optional, defaults to false
+                expandOneStreamToTwoRows: false # optional, defaults to true
+                fields: ["movies", "series", "episodes"]
+        - Jellyserr:
+            icon: jellyseerr
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:5056
+            server: my-docker
+            container: jellyseerr
+            widget:
+                type: jellyseerr
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5056
+                key: {{HOMEPAGE_VAR_JELLYSEERR_API}}
+        - Watcharr:
+            icon: sh-watcharr
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:3080
+            server: my-docker
+            container: watcharr    
+    - Reading:
+        - Calibre:
+            icon: sh-calibre
+            href: https://calibre.{{HOMEPAGE_VAR_LOCAL}}
+            server: my-docker
+            container: calibre   
+        - Book Manager:
+                icon: calibre-web-automated-book-downloader
+                href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8084
+                server: my-docker
+                container: calibre-web-automated-book-downloader
+        - Book Manager Kids:
+            icon: calibre-web-automated-book-downloader
+            href: https://bookmanagement.{{HOMEPAGE_VAR_DOMAIN}}
+            server: docker-oracle
+            container: cwa-book-downloader    
+
+- Arr Support:
+    - Sync:
+        - Prowlarr:
+            icon: sh-prowlarr
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:9696
+            server: my-docker
+            container: prowlarr
+            #widget:
+                #type: prowlarr
+                #url: http://{{HOMEPAGE_VAR_SERVER_IP}}:9696
+                #key: {{HOMEPAGE_VAR_PROWLARR_KEY}}
+                #fields: ["numberOfGrabs", "numberOfQueries", "numberOfFailGrabs"]
+        - Plex Trakt Sync:
+            icon: sh-trakt
+            server: my-docker
+            container: plextraktsync
+    - Background:
+        - Recyclarr:
+            icon: trash-guides
+            server: my-docker
+            container: recyclarr
+        - Unpackerr:
+            icon: sh-unpackerr
+            server: my-docker
+            container: unpackerr
+    - Monitoring:
+        - Tautulli:
+            icon: sh-tautulli
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8181
+            server: my-docker
+            container: tautulli
+
+- Applications:
+    - Household:
+        - Mealie:
+            icon: sh-mealie
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:9925
+            server: my-docker
+            container: mealie
+            widget:
+                type: mealie
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:9925
+                key: {{HOMEPAGE_VAR_MEALIE_KEY}}
+                fields: ["recipes", "categories", "tags"]
+                version: 2
+        - Passwords:
+            icon: sh-bitwarden
+            href: https://vault.{{HOMEPAGE_VAR_DOMAIN}}
+            siteMonitor: https://vault.{{HOMEPAGE_VAR_DOMAIN}}
+    - Finances:
+        - Shopping:
+            - ChangeDetection:
+                icon: sh-changedetection
+                href: http://{{HOMEPAGE_VAR_CHANGE_IP}}:5000
+                siteMonitor: http://{{HOMEPAGE_VAR_CHANGE_IP}}:5000
+                widget:
+                    type: changedetectionio
+                    url: http://{{HOMEPAGE_VAR_CHANGE_IP}}:5000
+                    key: {{HOMEPAGE_VAR_CHANGE_KEY}}
+                    fields: ["diffsDetected"]
+        - Budgeting:
+            - Budget:
+                icon: ocular
+                href: https://budget.{{HOMEPAGE_VAR_DOMAIN}}
+                server: my-docker
+                container: ocular-nginx
+            - Subscriptions:
+                icon: sh-wallos
+                href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8282
+                server: my-docker
+                container: wallos
+
+    - Coding:
+        - Forgejo:
+            icon: forgejo
+            href: https://forgejo.{{HOMEPAGE_VAR_DOMAIN}}
+            server: docker-oracle
+            container: forgejo
+        - Linkstack:
+            icon: sh-linkstack
+            href: https://michael.{{HOMEPAGE_VAR_DOMAIN}}
+            siteMonitor: https://michael.{{HOMEPAGE_VAR_DOMAIN}}    
+        - Glance:
+            icon: glance
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8088
+            server: my-docker
+            container: glance
+        - Code:
+            icon: code-server
+            href: https://code.{{HOMEPAGE_VAR_DOMAIN}}
+            server: my-docker
+            container: code-server
+        - Folding:
+            icon: foldingathome.png
+            href: https://foldingathome.{{HOMEPAGE_VAR_DOMAIN}}
+            server: docker-oracle
+            container: foldingathome
+            #widget:
+            #    type: customapi
+            #    url: https://api.foldingathome.org/user/{{HOMEPAGE_VAR_FOLDING_NAME}}
+            #    refreshInterval: 43200000
+            #    method: GET
+            #    mappings:
+            #      - field: name
+            #        label: Name
+            #        format: text
+            #      - field: wus
+            #        label: WUs
+            #        format: number
+            #      - field: score
+            #        label: score
+            #        format: number
+        - Tudu:
+            icon: sh-tududi
+            href: http://{{HOMEPAGE_VAR_TUDUDI_IP}}:3002
+            siteMonitor: http://{{HOMEPAGE_VAR_TUDUDI_IP}}:3002
+- Automation:    
+    - Home:
+        - Home Assistant:
+            icon: sh-home-assistant
+            href: https://hass.{{HOMEPAGE_VAR_DOMAIN}}
+            server: docker-hass
+            container: homeassistant
+            widget:
+                type: homeassistant
+                url: http://{{HOMEPAGE_VAR_HASS_IP}}:8123
+                key: {{HOMEPAGE_VAR_HASS_KEY}}
+                custom:
+                  - state: climate.my_ecobee
+                    label: Furnace
+                  - state: sensor.my_ecobee_temperature
+                    label: House temp
+                  - state: switch.office_lamp_smart_socket_socket_1
+                    label: Office lamp
+                  #- template: "{{ state_attr('weather.forecast_home_assistant','forecast')[0].templow | int(1) }}/{{ state_attr('weather.forecast_home_assistant','forecast')[1].temperature | int(1) }} °C"
+                  #  label: Tomorrow
+    
+        - Scrypted:
+            icon: sh-scrypted
+            href: https://{{HOMEPAGE_VAR_SCRYPTED_IP}}:10443
+            siteMonitor: https://{{HOMEPAGE_VAR_SCRYPTED_IP}}:10443
+    - Garage:
+        - ratGDO:
+            icon: sh-esphome
+            href: http://{{HOMEPAGE_VAR_RATGDO_IP}}
+            siteMonitor: http://{{HOMEPAGE_VAR_RATGDO_IP}}
+            widget:
+              type: customapi
+              url: http://{{HOMEPAGE_VAR_RATGDO_IP}}/status.json
+              refreshInterval: 300000
+              mappings:
+                - field: garageDoorState
+                  label: Door
+                  format: text
+                - field: garageLightOn
+                  label: Light
+                  format: text
+                  remap:
+                    - value: false
+                      to: Off
+                    - value: true
+                      to: On
+                - field: upTime
+                  label: Uptime
+                  format: number
+                  scale: 1/3600000
+                  suffix: hrs
+
+        - Tracktor:
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:3333
+            icon: sh-tracktor
+            server: my-docker
+            container: tracktor
+    - Bots:
+        - Bing Rewards:
+            href: https://github.com/TheNetsky/Microsoft-Rewards-Script
+            icon: sh-microsoft-bing
+            server: docker-scripts
+            container: netsky
+        - iSponsorBlockTV:
+            icon: sh-youtube
+            server: my-docker
+            container: iSponsorBlockTV
+        - Steam:
+            icon: archisteamfarm
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:1242
+            server: my-docker
+            container: asfclaim #changed to the service that claims the actual games
+            #widget: #this works, but I mainly use ASF for freegames and don't need to track farming
+            #    type: customapi
+            #    url: http://{{HOMEPAGE_VAR_SERVER_IP}}:1242/Api/Bot/{{HOMEPAGE_VAR_ASF_BOT_NAME}} #enter botname in .env
+            #    method: GET
+            #    headers:
+            #        accept: application/json
+            #        Authentication: {{HOMEPAGE_VAR_IPC_KEY}}
+                #display: list
+            #    mappings:
+            #      - field:
+            #            Result:
+            #                {{HOMEPAGE_VAR_ASF_BOT_NAME}}:
+            #                    CardsFarmer:
+            #                      CurrentGamesFarming: 
+            #                        0: GameName
+            #        label: Farming
+            #        format: text
+            #      - field:
+            #            Result:
+            #               {{HOMEPAGE_VAR_ASF_BOT_NAME}}: 
+            #                    CardsFarmer: TimeRemaining
+            #        label: ETA
+            #        format: text
+                  #- field:
+                  #      Result:
+                  #          {{HOMEPAGE_VAR_ASF_BOT_NAME}}:
+                  #              CardsFarmer: GamesToFarm
+                  #  label: Games to farm
+                  #  format: float  
+            #      - field:
+            #            Result:
+            #                {{HOMEPAGE_VAR_ASF_BOT_NAME}}: IsConnectedAndLoggedOn
+            #        label: Connected
+            #        format: text
+            #        remap:
+            #          - value: false
+            #            to: Offline
+            #          - value: true
+            #            to: Online
+        - Epic:
+            icon: sh-epic-games
+            server: my-docker
+            container: epic
+        - Prime GOG:
+            icon: sh-free-games-claimer
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:6080
+            server: my-docker
+            container: fgc
+        - Itch.io:
+            href: https://itch.io
+            icon: https://static.itch.io/images/app-icon.svg
+            server: my-docker
+            container: itchclaim
+
+- Minecraft:
+    - Crafty Controller: 
+        icon: sh-crafty-controller
+        href: https://crafty.{{HOMEPAGE_VAR_DOMAIN}}
+        #server: docker-oracle
+        #container: crafty
+        widget:
+            type: customapi
+            url: https://crafty.{{HOMEPAGE_VAR_DOMAIN}}/api/v2/crafty/stats
+            refreshInterval: 10000
+            method: GET
+            headers:
+                Authorization: Bearer {{HOMEPAGE_VAR_CRAFTY_TOKEN}}
+            mappings:
+              - field: status
+                label: Status
+                format: text
+              - field:
+                   data: cpu_usage
+                label: CPU
+                format: percent
+              - field:
+                   data: mem_percent
+                label: MEM
+                format: percent
+              #- field:
+              #     data: mem_usage
+              #  label: RAM/24GB
+              #  format: text       
+    - Minecraft (port 25565):
+        icon: sh-minecraft
+        href: https://crafty.{{HOMEPAGE_VAR_DOMAIN}}:8443
+        widget:
+            type: minecraft
+            url: udp://{{HOMEPAGE_VAR_ORACLE_IP}}:25565
+    - Creative (port 19132):
+        icon: sh-minecraft
+        href: https://crafty.{{HOMEPAGE_VAR_DOMAIN}}:8443
+        widget:
+            type: gamedig
+            serverType: mbe
+            url: udp://{{HOMEPAGE_VAR_ORACLE_IP}}:19132
+            fields: ["name", "players", "status"]
+    - Survival (port 19134):
+        icon: sh-minecraft
+        href: https://crafty.{{HOMEPAGE_VAR_DOMAIN}}:8443
+        widget:
+            type: gamedig
+            serverType: mbe
+            url: udp://{{HOMEPAGE_VAR_ORACLE_IP}}:19134
+            fields: ["name", "players", "status"]
+- Server:
+    - Proxmox:
+        - PVE:
+            icon: sh-proxmox
+            href: https://{{HOMEPAGE_VAR_PROXMOX_IP}}:8006
+            siteMonitor: https://{{HOMEPAGE_VAR_PROXMOX_IP}}:8006
+            widget:
+                type: proxmox
+                url: https://{{HOMEPAGE_VAR_PROXMOX_IP}}:8006
+                username: {{HOMEPAGE_VAR_PROXMOX_USER}}
+                password: {{HOMEPAGE_VAR_PROXMOX_PASS}}
+        - TTeck Scripts:
+            icon: https://community-scripts.github.io/ProxmoxVE/logo.png
+            href: https://community-scripts.github.io/ProxmoxVE/
+        - Intel AMT:
+            icon: si-intel
+            href: http://{{HOMEPAGE_VAR_PROXMOX_IP}}:16992
+    - Docker:
+        - Watchtower:
+            icon: sh-watchtower
+            server: my-docker
+            container: watchtower
+            widget:
+                type: watchtower
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:8090
+                key: {{HOMEPAGE_VAR_WATCHTOWER_TOKEN}} 
+        - Dockge (compose):
+            icon: sh-dockge
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:5001
+            server: my-docker
+            container: dockge
+        - Dozzle (logs):
+            icon: sh-dozzle
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:9991
+            server: my-docker
+            container: dozzle
+    - System Services:
+        - Uptime-kuma:
+            icon: sh-uptime-kuma
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:3001
+            server: my-docker
+            container: uptime-kuma 
+            widget:
+                type: uptimekuma
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:3001
+                slug: homelab  
+        - NTFY:
+            href: https://ntfy.{{HOMEPAGE_VAR_DOMAIN}}
+            icon: sh-ntfy
+            server: my-docker
+            container: ntfy
+            widget:
+                type: customapi
+                url: https://ntfy.{{HOMEPAGE_VAR_DOMAIN}}/v1/stats
+                mappings:
+                  - field: messages
+                    label: Messages
+                    format: number
+                  - field: messages_rate
+                    label: Messages/s
+                    format: number
+- Networking:  
+    - Proxying:
+        - NPM:
+            icon: sh-nginx-proxy-manager
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:81
+            server: my-docker
+            container: npm
+            widget:
+                type: npm
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:81
+                username: {{HOMEPAGE_VAR_USER_EMAIL}}
+                password: {{HOMEPAGE_VAR_NPM_PASS}}
+        - Pangolin:
+            icon: pangolin
+            href: https://pangolin.{{HOMEPAGE_VAR_DOMAIN}}
+            server: docker-oracle
+            container: pangolin
+    - Ad-blocking:
+        - Pi-Hole (RPi):
+            icon: sh-pi-hole
+            href: https://{{HOMEPAGE_VAR_RPI_1_IP}}/admin
+            server: docker-rpi
+            container: pihole
+            widget:
+                type: pihole
+                url: https://{{HOMEPAGE_VAR_RPI_1_IP}}
+                version: 6
+                key: "{{HOMEPAGE_VAR_RPI_1_APP_PASS}}"
+        - Pi-Hole (LXC):
+            icon: sh-pi-hole
+            href: https://{{HOMEPAGE_VAR_RPI_LXC_IP}}/admin
+            widget:
+                type: pihole
+                url: https://{{HOMEPAGE_VAR_RPI_LXC_IP}}
+                version: 6
+                #key: "{{HOMEPAGE_VAR_RPI_LXC_API}}"
+        - dnscrypt-proxy:
+            icon: unbound
+            server: docker-rpi
+            container: dnscrypt-proxy
+        #- dnscrypt-proxy:
+        #    icon: sh-unbound
+        #    server: docker-rpi
+        #    container: dnscrypt-proxy
+    - Tunnels:
+        - Cloudflare:
+            icon: sh-cloudflare
+            server: my-docker
+            container: cloudflare-tunnel
+            widget:
+                type: cloudflared
+                accountid: {{HOMEPAGE_VAR_CLOUDFLARE_ACCOUNT}}
+                tunnelid: {{HOMEPAGE_VAR_CLOUDFLARE_TUNNEL}}
+                key: {{HOMEPAGE_VAR_CLOUDFLARE_KEY}}
+        - Wireguard:
+            icon: sh-wireguard
+            href: http://{{HOMEPAGE_VAR_RPI_1_IP}}:51821
+            server: docker-rpi
+            container: wg-easy
+            widget:
+              type: wgeasy
+              url: http://{{HOMEPAGE_VAR_RPI_1_IP}}:51821
+              version: 2 # optional, default is 1
+              username: {{HOMEPAGE_VAR_WG_USER}}
+              password: {{HOMEPAGE_VAR_WG_PASS}}
+              threshold: 2 # optional

@@ -1,0 +1,66 @@
+name: "networking"
+
+# ===== THIS COMPOSE FILE =====
+# Services included:
+#   - Pangolin Newt
+#   - NPM
+
+# == ANCHORS ==
+# These anchors define baseline configuration applied to most containers.
+# Default behavior:
+#   - Include all entries under '&homelab-default' via <<: *homelab-default
+#   - Additional labels can be added per container using <<: *labels
+
+x-app: &homelab-default 
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges=true
+  networks:
+    - homelab
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+  env_file: &env-files
+    - ../envs/global.env
+    - ../envs/networking.env
+
+services:
+
+  ## PANGOLIN
+  newt:
+    <<: *homelab-default
+    image: fosrl/newt
+    container_name: newt
+    environment:
+      - DOCKER_SOCKET=/var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+  
+  npm:
+    # Description: NPM reverse proxy
+    <<: *homelab-default
+    image: jc21/nginx-proxy-manager:latest
+    container_name: npm
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./npm/data:/data
+      - ./npm/letsencrypt:/etc/letsencrypt
+      - ../themepark/98-themepark-nginx-proxy-manager:/etc/cont-init.d/98-themepark/ #this must be manually added, see download script
+    networks: #make all networks visible to npm, and add them below to ### NETWORKS as well
+      - homelab
+      - skynet
+      - homefinance
+
+#### NETWORKS
+networks:
+  homelab:
+    driver: bridge
+    external: true
+  skynet:
+    driver: bridge
+    external: true
+  homefinance:
+    driver: bridge
+    external: true

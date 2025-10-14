@@ -1,0 +1,83 @@
+name: "finances"
+
+# ===== THIS COMPOSE FILE =====
+# Services included:
+#   - ocular
+#   - wallos
+
+# == ANCHORS ==
+# These anchors define baseline configuration applied to most containers.
+# Default behavior:
+#   - Include all entries under '&finance-default' via <<: *finance-default
+#   - Additional labels can be added per container using <<: *labels
+
+x-app: &finance-default 
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges=true
+  networks:
+    - homefinance
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+  env_file: &env-files
+    - ../envs/global.env
+    - ../envs/finances.env
+
+services:
+  ##Ocular
+  #Description: https://github.com/simonwep/ocular-docker
+  backend:
+    <<: *finance-default
+    image: ghcr.io/simonwep/genesis:v1.4.1
+    container_name: ocular-backend
+    volumes:
+      - ./ocular/data:/app/.data
+    command: start
+    environment:
+      - GENESIS_PORT
+      - GENESIS_DB_PATH
+      - GENESIS_CREATE_USERS
+      - GENESIS_AUTHORIZED_URIS
+      - GENESIS_JWT_SECRET
+      - GENESIS_JWT_TOKEN_EXPIRATION
+      - GENESIS_JWT_COOKIE_ALLOW_HTTP
+      - GENESIS_USERNAME_PATTERN
+      - GENESIS_KEY_PATTERN
+      - GENESIS_DATA_MAX_SIZE
+      - GENESIS_KEYS_PER_USER
+      - GENESIS_GIN_MODE
+      - GENESIS_LOG_MODE
+  frontend:
+    <<: *finance-default
+    container_name: ocular-frontend
+    image: ghcr.io/simonwep/ocular:v1.11.1
+    environment:
+      - OCULAR_DEMO
+  nginx:
+    <<: *finance-default
+    container_name: ocular-nginx
+    image: nginx:1.26-alpine
+    ports:
+      - "3030:80"
+    volumes:
+      - ./ocular/config/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend
+      - frontend
+
+  wallos:
+    #description: subscription manager useful for tracking recurring bills and payments
+    <<: *finance-default
+    container_name: wallos
+    image: bellamy/wallos:latest
+    ports:
+      - 8282:80/tcp
+    volumes:
+      - ./wallos/db:/var/www/html/db
+      - ./wallos/logos:/var/www/html/images/uploads/logos
+
+### NETWORKS
+networks:
+  homefinance:
+    driver: bridge
+    external: true

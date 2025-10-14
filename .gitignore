@@ -1,3 +1,81 @@
+# =============================
+# Homelab .gitignore (Whitelist-Based)
+# =============================
 
-.DS_Store
+# -----------------------------
+# Ignore everything by default
+# -----------------------------
+*
+!*/
+
+# -----------------------------
+# Whitelist docker-compose files (any depth)
+# -----------------------------
+!**/compose.yaml
+!**/docker-compose.yml
+!**/docker-compose.*.yml
+
+# -----------------------------
+# Whitelist envs directory (examples only)
+# -----------------------------
+!**/envs/
+!**/envs/*.example.env
+**/envs/*.env
+
+# -----------------------------
+# Whitelist documentation
+# -----------------------------
+!**/docs/*.md
+
+# -----------------------------
+# Whitelist README files anywhere
+# -----------------------------
+!**/README.md
+
+# -----------------------------
+# Homepage config & images
+# -----------------------------
+!**/apps/homepage/
+!**/apps/homepage/config/
+!**/apps/homepage/config/services.yaml
+!**/apps/homepage/config/settings.yaml
+!**/apps/homepage/config/widgets.yaml
+!**/apps/homepage/images/background.jpg
+
+# -----------------------------
+# Glance config
+# -----------------------------
+!**/apps/glance/glance.yml
+
+# -----------------------------
+# Recyclarr config
+# -----------------------------
+!**/media/recyclarr/config/recyclarr.yml
+
+# -----------------------------
+# Ignore sensitive data everywhere
+# -----------------------------
+*.key
+*.pem
+*.pub
 *.env
+!*.example.env
+secrets.*
+.ssh/
+*.bak
+
+# -----------------------------
+# Ignore runtime / generated files
+# -----------------------------
+**/data/
+**/configs/
+node_modules/
+
+# -----------------------------
+# Ignore system & editor files
+# -----------------------------
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/

@@ -1,0 +1,63 @@
+name: "manga"
+
+# ===== THIS COMPOSE FILE =====
+# Services included:
+#   - Suwayomi
+#   - Suwayomi-kids
+
+# == ANCHORS ==
+# These anchors define baseline configuration applied to most containers.
+# Default behavior:
+#   - Include all entries under '&homelab-default' via <<: *homelab-default
+#   - Additional labels can be added per container using <<: *labels
+
+x-app: &homelab-default 
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges=true
+  networks:
+    - homelab
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+  env_file: &env-files
+    - ../envs/global.env
+
+services:
+
+  suwayomi: &suwayomi
+    #description: https://github.com/Suwayomi/Suwayomi-Server
+    <<: *homelab-default
+    image: ghcr.io/suwayomi/tachidesk:preview
+    container_name: suwayomi
+    environment:
+      FLARESOLVERR_ENABLED: true
+      FLARESOLVERR_URL: http://flaresolverr:8191
+    volumes:
+      - /mnt/media/media/manga:/home/suwayomi/.local/share/Tachidesk/downloads
+      - ./suwayomi:/home/suwayomi/.local/share/Tachidesk
+    ports:
+      - "4567:4567"
+    restart: on-failure:3
+
+  suwayomi-kids:
+    <<: *suwayomi
+    image: ghcr.io/suwayomi/tachidesk:preview
+    container_name: suwayomi-kids
+    volumes:
+      - /mnt/media/media/manga:/home/suwayomi/.local/share/Tachidesk/downloads
+      - ./suwayomi-kids:/home/suwayomi/.local/share/Tachidesk
+    ports:
+      - "5678:4567"
+
+  flaresolverr:
+    <<: *homelab-default
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    ports:
+      - "8191:8191"
+    restart: unless-stopped
+
+networks:
+  homelab:
+    driver: bridge
+    external: true

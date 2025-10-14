@@ -1,0 +1,55 @@
+name: "tunnels"
+
+# ===== THIS COMPOSE FILE =====
+# Services included:
+# - Linkstack
+# - Cloudflared
+
+# == ANCHORS ==
+# These anchors define baseline configuration applied to most containers.
+# Default behavior:
+#   - Include all entries under '&tunnels-default' via <<: *tunnels-default
+#   - Additional labels can be added per container using <<: *labels
+
+x-app: &tunnels-default 
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges=true
+  networks:
+    - tunnels
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+  env_file: &env-files
+    - ../envs/global.env
+    - ../envs/tunnels.env
+
+services:
+
+  cloudflared: 
+      <<: *tunnels-default
+      image: cloudflare/cloudflared 
+      container_name: cloudflare-tunnel 
+      command: tunnel run 
+
+  linkstack:
+    <<: *tunnels-default
+    hostname: linkstack
+    image: linkstackorg/linkstack:latest
+    container_name: linkstack
+    environment:
+      #SERVER_ADMIN: ${ADMIN_EMAIL}
+      #HTTP_SERVER_NAME: ${SERVER_NAME}
+      #HTTPS_SERVER_NAME: ${SERVER_NAME}
+      LOG_LEVEL: 'info'
+      PHP_MEMORY_LIMIT: '256M'
+      UPLOAD_MAX_FILESIZE: '8M'
+    volumes:
+      - ./linkstack:/htdocs
+      - ./certificates:/etc/ssl/apache2
+    ports:
+      - 8190:443
+
+networks:
+  tunnels:
+    driver: bridge
+    external: true

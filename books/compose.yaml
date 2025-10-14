@@ -1,0 +1,84 @@
+name: "books"
+
+# ===== THIS COMPOSE FILE =====
+# Services included:
+#   - Calibre
+#   - Calibre-web-automated
+#   - CWA-book-downloader
+
+# == ANCHORS ==
+# These anchors define baseline configuration applied to most containers.
+# Default behavior:
+#   - Include all entries under '&homelab-default' via <<: *homelab-default
+#   - Additional labels can be added per container using <<: *labels
+
+x-app: &homelab-default 
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges=true
+  networks:
+    - homelab
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+  env_file: &env-files
+    - ../envs/global.env
+    - ../envs/books.env
+
+services:
+
+  calibre:
+    #description: book library, used mainly for auto-import and conversion
+    <<: *homelab-default
+    image: ghcr.io/linuxserver/calibre
+    container_name: calibre
+    volumes:
+      - /mnt/media/media/books:/config
+      - /mnt/media/media/books/uploads:/uploads 
+      - /mnt/media/media/books/plugins:/plugins
+    ports:
+      - 8086:8080
+      - 8087:8081
+      - 9090:9090
+  
+  calibre-web-automated:
+    <<: *homelab-default 
+    image: crocodilestick/calibre-web-automated:latest
+    container_name: calibre-web-automated
+    volumes:
+      # CW users migrating should stop their existing CW instance, make a copy of the config folder, and bind that here to carry over all of their user settings ect.
+      - ./calibre-web-automated:/config 
+      # This is an ingest dir, NOT a library one. Anything added here will be automatically added to your library according to the settings you have configured in CWA Settings page. All files placed here are REMOVED AFTER PROCESSING
+      - /mnt/media/media/books/uploads:/cwa-book-ingest
+      # If you don't have an existing library, CWA will automatically create one at the bind provided here
+      - "/mnt/media/media/books/Calibre Library:/calibre-library"
+      # If you use calibre plugins, you can bind your plugins folder here to have CWA attempt to add them to it's workflow (WIP)
+      - /mnt/media/media/books/plugins:/config/.config/calibre/plugins
+    ports:
+      # Change the first number to change the port you want to access the Web UI, not the second
+      - 8083:8083 
+
+  calibre-web-automated-book-downloader:
+    <<: *homelab-default 
+    image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest
+    container_name: calibre-web-automated-book-downloader
+    environment:
+      FLASK_PORT: 8084
+      LOG_LEVEL: info
+      BOOK_LANGUAGE: en
+      USE_BOOK_TITLE: true
+      APP_ENV: prod
+      CWA_DB_PATH: /auth/app.db
+    ports:
+      - 8084:8084
+    volumes:
+      # This is where the books will be downloaded to, usually it would be
+      # the same as whatever you gave in "calibre-web-automated"
+      - /mnt/media/media/books/uploads:/cwa-book-ingest
+      # This is the location of CWA's app.db, which contains authentication
+      # details
+      - ./calibre-web-automated/app.db:/auth/app.db:ro
+      
+networks:
+  homelab:
+    driver: bridge
+    external: true
