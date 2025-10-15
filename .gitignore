@@ -23,11 +23,6 @@
 **/envs/*.env
 
 # -----------------------------
-# Whitelist documentation
-# -----------------------------
-!**/docs/*.md
-
-# -----------------------------
 # Whitelist README files anywhere
 # -----------------------------
 !**/README.md
@@ -51,6 +46,7 @@
 # Recyclarr config
 # -----------------------------
 !**/media/recyclarr/config/recyclarr.yml
+media/recyclarr/config/repositories/
 
 # -----------------------------
 # Ignore sensitive data everywhere
@@ -79,3 +75,13 @@ node_modules/
 *.swo
 *~
 .vscode/
+
+# -----------------------------
+# Prevent deep recursion in certain stacks (but keep compose.yaml)
+# -----------------------------
+networking/
+bots/
+tunnels/linkstack/
+apps/code-server/config/extensions/
+!networking/compose.yaml
+!bots/compose.yaml
