@@ -763,6 +763,7 @@ Set up SSH keys first for passwordless git operations:
    ```bash
    git add .
    git commit -m "Initial homelab configuration"
+   git branch -M main
    git push -u origin main
    ```
 
@@ -815,6 +816,15 @@ docker compose up -d
 
 ## Support
 
-If my documentation has been helpful, please consider donating:
+Pull requests to contribute improvements are welcome and encouraged. I'm still learning and doing this in my limited spare time, please be patient with any problems and contribute wherever you can.
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=R4QX73RWYB3ZA)
+🙏 If you've found this project helpful, and/or you'd like to support further development:
+
+<p align="center">
+  <a href="https://www.buymeacoffee.com/cammaratam" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" alt="Buy Me A Coffee" height="60">
+  </a>
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=R4QX73RWYB3ZA" target="_blank">
+    <img src="https://img.shields.io/badge/Donate-PayPal-green.svg" alt="Donate via PayPal" height="60">
+  </a>
+</p>
