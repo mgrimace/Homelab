@@ -16,11 +16,13 @@
 !**/docker-compose.*.yml
 
 # -----------------------------
-# Whitelist envs directory (examples only)
+# Whitelist envs directory (examples and encrypted only)
 # -----------------------------
 !**/envs/
 !**/envs/*.example.env
+!**/envs/*.env.enc
 **/envs/*.env
+**/envs/.decrypted~*.env
 
 # -----------------------------
 # Whitelist README files anywhere

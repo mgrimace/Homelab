@@ -17,6 +17,7 @@ A low-power, always-on home server built around the \*arr suite and self-hosted 
 - [Recyclarr](#recyclarr)
 - [Networking & Remote Access](#networking--remote-access)
 - [Forgejo Backup](#forgejo-backup)
+- [SOPS Encrypted Environment Files](#sops-encrypted-environment-files)
 - [Support Me](#support)
 
 ---
@@ -810,6 +811,78 @@ cd /opt/homelab
 git pull origin main
 # Rebuild any affected services
 docker compose up -d
+```
+
+---
+
+## SOPS Encrypted Environment Files
+
+Sensitive environment files (`.env`) can be safely versioned and backed up using [Mozilla SOPS](https://github.com/mozilla/sops) with [age](https://github.com/FiloSottile/age) encryption. This keeps your credentials secure while maintaining your normal Docker workflow.
+
+**References:**
+- https://technotim.live/posts/secret-encryption-sops/
+
+### Setup
+
+```bash
+# Install latest version of SOPS
+SOPS_LATEST_VERSION=$(curl -s "https://api.github.com/repos/getsops/sops/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
+curl -Lo sops.deb "https://github.com/getsops/sops/releases/download/v${SOPS_LATEST_VERSION}/sops_${SOPS_LATEST_VERSION}_amd64.deb"
+sudo apt --fix-broken install ./sops.deb
+rm -rf sops.deb
+sops -version
+
+# Install latest version of AGE
+AGE_LATEST_VERSION=$(curl -s "https://api.github.com/repos/FiloSottile/age/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
+curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-v${AGE_LATEST_VERSION}-linux-amd64.tar.gz"
+tar xf age.tar.gz
+sudo mv age/age /usr/local/bin
+sudo mv age/age-keygen /usr/local/bin
+age -version
+age-keygen -version
+
+# Configure a key
+mkdir -p ~/.config/sops/age
+age-keygen -o ~/.config/sops/age/key.txt
+grep public ~/.config/sops/age/key.txt
+
+#optionally, set:
+export SOPS_AGE_KEY_FILE=~/.config/sops/age/key.txt
+```
+
+Copy the printed **public key** (starts with `age1...`) — you’ll use it for encryption.
+
+### Encrypting Environment Files
+
+```bash
+# For each .env do the following:
+sops --encrypt --age age1yourpublickey /opt/homelab/envs/apps.env > /opt/homelab/envs/apps.env.enc
+# Or if you set it above, you can encrypt each env without pasting key
+sops --encrypt --age $(cat $SOPS_AGE_KEY_FILE |grep -oP "public key: \K(.*)") /opt/homelab/envs/apps.env > /opt/homelab/envs/apps.env.enc
+# Or encrypt all envs in the /envs/ folder, skipping the example.envs
+for file in /opt/homelab/envs/*.env; do [[ "$file" == *.example.env ]] && continue; sops --encrypt --age $(cat $SOPS_AGE_KEY_FILE | grep -oP "public key: \K(.*)") "$file" > "${file}.enc"; done
+```
+
+>Note: Optionally safely delete the plaintext file:
+```bash
+shred -u /opt/homelab/envs/apps.env
+```
+
+### Decrypting for Use
+
+Before deploying a stack:
+```bash
+sops --decrypt /opt/homelab/envs/apps.env.enc > /opt/homelab/envs/apps.env
+docker compose -f /opt/homelab/apps/docker-compose.yml up -d
+# Or all envs via
+for file in /opt/homelab/envs/*.env.enc; do sops --decrypt "$file" > "${file%.enc}"; done
+```
+
+### Editing Encrypted Files
+
+You can directly edit an encrypted file — SOPS decrypts it on the fly and re-encrypts when you save:
+```bash
+sops --input-type dotenv --output-type dotenv /opt/homelab/envs/apps.env.enc
 ```
 
 ---
