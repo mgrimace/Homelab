@@ -40,11 +40,6 @@
 !**/apps/homepage/images/background.jpg
 
 # -----------------------------
-# Glance config
-# -----------------------------
-!**/apps/glance/glance.yml
-
-# -----------------------------
 # Recyclarr config
 # -----------------------------
 !**/media/recyclarr/config/recyclarr.yml
