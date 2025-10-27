@@ -62,6 +62,7 @@
     #expanded: true
     label: backups
 - glances:
+    href: http://{{HOMEPAGE_VAR_OMV_IP}}
     url: http://{{HOMEPAGE_VAR_PROXMOX_IP}}:61208
     username: {{HOMEPAGE_VAR_GLANCES_USER}}
     password: {{HOMEPAGE_VAR_GLANCES_PASS}}

@@ -17,6 +17,8 @@ x-app: &homelab-default
     - no-new-privileges=true
   networks:
     - homelab
+    - skynet
+    - homefinance
   labels: &labels
     com.centurylinklabs.watchtower.enable: "true"
   env_file: &env-files
@@ -48,10 +50,6 @@ services:
       - ./npm/data:/data
       - ./npm/letsencrypt:/etc/letsencrypt
       - ../themepark/98-themepark-nginx-proxy-manager:/etc/cont-init.d/98-themepark/ #this must be manually added, see download script
-    networks: #make all networks visible to npm, and add them below to ### NETWORKS as well
-      - homelab
-      - skynet
-      - homefinance
 
 #### NETWORKS
 networks:

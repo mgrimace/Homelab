@@ -75,6 +75,20 @@ services:
       - ../envs/global.env
       - ../envs/apps.env
       - ../envs/dashboards.env
+
+  jotty:
+    <<: *homelab-default
+    image: ghcr.io/fccview/jotty:develop
+    container_name: jotty
+    user: "1000:1000"
+    ports:
+      - "1122:3000"
+    volumes:
+      - ./jotty/data:/app/data:rw
+      - ./jotty/config:/app/config:ro
+      - ./jotty/cache:/app/.next/cache:rw
+    environment:
+      - NODE_ENV=production
             
   mealie:
     <<: *homelab-default
@@ -103,69 +117,18 @@ services:
       #SMTP_USER: "${SMTP_USER}"
       #SMTP_PASSWORD: "${SMTP_PASSWORD}"
 
-  vikunja:
-    <<: *homelab-default
-    image: vikunja/vikunja
-    container_name: vikunja
-    environment:
-      VIKUNJA_DATABASE_PATH: /db/vikunja.db
-    ports:
-      - 3456:3456
-    volumes:
-      - ./vikunja/files:/app/vikunja/files
-      - ./vikunja/db:/db
-    restart: unless-stopped
-
-    #image: vikunja/vikunja
-    #container_name: vikunja
-    #environment:
-      #commented-out values are in apps.env
-      #VIKUNJA_SERVICE_PUBLICURL: ${VIKUNJA_SERVICE_PUBLICURL}
-    #  VIKUNJA_DATABASE_HOST: db
-      #VIKUNJA_DATABASE_PASSWORD: ${VIKUNJA_DATABASE_PASSWORD}
-    #  VIKUNJA_DATABASE_TYPE: mysql
-    #  VIKUNJA_DATABASE_USER: vikunja
-    #  VIKUNJA_DATABASE_DATABASE: vikunja
-      #VIKUNJA_SERVICE_JWTSECRET: ${VIKUNJA_SERVICE_JWTSECRET}
-    #  VIKUNJA_SERVICE_ENABLETASKATTACHMENTS: 1
-    #  VIKUNJA_SERVICE_ENABLEREGISTRATION: 0
-    #  VIKUNJA_SERVICE_ENABLEEMAILREMINDERS: 1
-    #  VIKUNJA_SERVICE_TIMEZONE: America/Toronto
-    #  VIKUNJA_MAILER_ENABLED: 1
-    #  VIKUNJA_MAILER_FORCESSL: 1
-      #VIKUNJA_MAILER_HOST: ${VIKUNJA_MAILER_HOST}
-      #VIKUNJA_MAILER_PORT: ${VIKUNJA_MAILER_PORT}
-      #VIKUNJA_MAILER_USERNAME: ${VIKUNJA_MAILER_USERNAME}
-      #VIKUNJA_MAILER_PASSWORD: ${VIKUNJA_MAILER_PASSWORD}
-    #  VIKUNJA_LOG_LEVEL: INFO
-    #  VIKUNJA_LOG_MAIL: stdout
-    #  VIKUNJA_LOG_MAILLEVEL: DEBUG
-    #  VIKUNJA_CORS_ENABLE: true
-    #ports:
-    #  - 3456:3456
-    #volumes:
-    #  - ./vikunja/files:/app/vikunja/files
-    #  - ./vikunja/config.yml:/etc/vikunja/config.yml
-    #depends_on:
-    #  db:
-    #    condition: service_healthy
-  #db:
+  #vikunja:
   #  <<: *homelab-default
-  #  image: mariadb:10
-  #  container_name: vikunja-db
-  #  command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  #  image: vikunja/vikunja
+  #  container_name: vikunja
   #  environment:
-  #    #MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  #    MYSQL_USER: vikunja
-  #    #MYSQL_PASSWORD: ${VIKUNJA_DATABASE_PASSWORD}
-  #    MYSQL_DATABASE: vikunja
+  #    VIKUNJA_DATABASE_PATH: /db/vikunja.db
+  #  ports:
+  #    - 3456:3456
   #  volumes:
-  #    - ./vikunja/db:/var/lib/mysql
-  #  labels:
-  #    - "com.centurylinklabs.watchtower.enable=false"
-  #  healthcheck:
-  #      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"]
-  #      interval: 2s
+  #    - ./vikunja/files:/app/vikunja/files
+  #    - ./vikunja/db:/db
+  #  restart: unless-stopped
   
   flatnotes:
     <<: *homelab-default

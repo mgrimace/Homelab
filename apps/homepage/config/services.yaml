@@ -23,17 +23,76 @@
             key: {{HOMEPAGE_VAR_OVERSEER_KEY}}
             fields: ["pending", "processing", "available"]
 - Apps:
-    - To-Do:
-        icon: vikunja
-        href: https://todo.{{HOMEPAGE_VAR_DOMAIN}}
+    - Jotty (Notes, To-Do):
+        icon: sh-jotty
+        href: http://{{HOMEPAGE_VAR_SERVER_IP}}:1122/checklist/inbox
         server: my-docker
-        container: vikunja
+        container: jotty
         widget:
-            type: vikunja
-            url: https://todo.{{HOMEPAGE_VAR_DOMAIN}}
-            key: {{HOMEPAGE_VAR_VIKUNJA_API}}
-            enableTaskList: false
-            fields: ["projects", "tasks7d", "tasksOverdue"]
+          type: customapi
+          url: http://{{HOMEPAGE_VAR_SERVER_IP}}:1122/api/summary
+          method: GET
+          headers:
+            x-api-key: {{HOMEPAGE_VAR_JOTTY_API}}
+          mappings:
+            #  - field: "summary.tasks.inProgress"
+            #    label: "In Progress"
+            #    format: number
+            #  - field: "summary.checklists.total"
+            #    label: "Checklists"
+            #    format: number
+              - field: "summary.notes.total"
+                label: "Notes"
+                format: number
+            #  - field: "summary.username"
+            #    label: "User"
+            #    format: text
+            #  - field: "summary.notes.categories"
+            #    label: "Note Categories"
+            #    format: size 
+            #  - field: "summary.checklists.categories"
+            #    label: "Checklist Categories"
+            #    format: size 
+            #  - field: "summary.checklists.types.simple"
+            #    label: "Simple Lists"
+            #    format: number
+            #  - field: "summary.checklists.types.task"
+            #    label: "Task Lists"
+            #    format: number
+              - field: "summary.items.total"
+                label: "Total Items"
+                format: number
+              - field: "summary.items.completed"
+                label: "Completed Items"
+                format: number
+              - field: "summary.items.completionRate"
+                label: "Item Completion"
+                format: number
+                suffix: "%"
+            #  - field: "summary.tasks.total"
+            #    label: "Total Tasks"
+            #    format: number
+            #  - field: "summary.tasks.todo"
+            #    label: "Tasks To-Do"
+            #    format: number
+            #  - field: "summary.tasks.completed"
+            #    label: "Completed Tasks"
+            #    format: number
+              #- field: "summary.tasks.completionRate"
+              #  label: "Task Completion"
+              #  format: number
+              #  suffix: "%"
+    #- To-Do:
+    #    icon: vikunja
+    #    href: https://todo.{{HOMEPAGE_ VAR_DOMAIN}}
+    #    server: my-docker
+    #    container: vikunja
+    #    widget:
+    #        type: vikunja
+    #        url: https://todo.{{HOMEPAGE_VAR_DOMAIN}}
+    #        key: {{HOMEPAGE_VAR_VIKUNJA_API}}
+    #        enableTaskList: false
+    #        fields: ["projects", "tasks7d", "tasksOverdue"]
     - Notes:
         icon: flatnotes
         href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8383
@@ -103,7 +162,7 @@
                 type: suwayomi
                 url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5678
                 fields: ["download", "read", "unread"]
-                
+
 - Tracking:
     - Television:
         - TV releases:
@@ -266,11 +325,12 @@
         - Shopping:
             - ChangeDetection:
                 icon: sh-changedetection
-                href: http://{{HOMEPAGE_VAR_CHANGE_IP}}:5000
-                siteMonitor: http://{{HOMEPAGE_VAR_CHANGE_IP}}:5000
+                href: http://{{HOMEPAGE_VAR_SERVER_IP}}:5000
+                server: my-docker
+                container: changedetection
                 widget:
                     type: changedetectionio
-                    url: http://{{HOMEPAGE_VAR_CHANGE_IP}}:5000
+                    url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5000
                     key: {{HOMEPAGE_VAR_CHANGE_KEY}}
                     fields: ["diffsDetected"]
         - Budgeting:
@@ -325,31 +385,18 @@
             #      - field: score
             #        label: score
             #        format: number
-        - Tudu:
-            icon: sh-tududi
-            href: http://{{HOMEPAGE_VAR_TUDUDI_IP}}:3002
-            siteMonitor: http://{{HOMEPAGE_VAR_TUDUDI_IP}}:3002
+
 - Automation:    
     - Home:
-        - Home Assistant:
-            icon: sh-home-assistant
-            href: https://hass.{{HOMEPAGE_VAR_DOMAIN}}
-            server: docker-hass
-            container: homeassistant
+        - Homebridge:
+            icon: sh-homebridge
+            href: http://{{HOMEPAGE_VAR_HB_IP}}:8581
             widget:
-                type: homeassistant
-                url: http://{{HOMEPAGE_VAR_HASS_IP}}:8123
-                key: {{HOMEPAGE_VAR_HASS_KEY}}
-                custom:
-                  - state: climate.my_ecobee
-                    label: Furnace
-                  - state: sensor.my_ecobee_temperature
-                    label: House temp
-                  - state: switch.office_lamp_smart_socket_socket_1
-                    label: Office lamp
-                  #- template: "{{ state_attr('weather.forecast_home_assistant','forecast')[0].templow | int(1) }}/{{ state_attr('weather.forecast_home_assistant','forecast')[1].temperature | int(1) }} °C"
-                  #  label: Tomorrow
-    
+              type: homebridge
+              url: http://{{HOMEPAGE_VAR_HB_IP}}:8581
+              username: {{HOMEPAGE_VAR_USER}}
+              password: {{HOMEPAGE_VAR_HB_PASS}}
+
         - Scrypted:
             icon: sh-scrypted
             href: https://{{HOMEPAGE_VAR_SCRYPTED_IP}}:10443

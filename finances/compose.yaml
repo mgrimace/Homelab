@@ -33,26 +33,10 @@ services:
     volumes:
       - ./ocular/data:/app/.data
     command: start
-    environment:
-      - GENESIS_PORT
-      - GENESIS_DB_PATH
-      - GENESIS_CREATE_USERS
-      - GENESIS_AUTHORIZED_URIS
-      - GENESIS_JWT_SECRET
-      - GENESIS_JWT_TOKEN_EXPIRATION
-      - GENESIS_JWT_COOKIE_ALLOW_HTTP
-      - GENESIS_USERNAME_PATTERN
-      - GENESIS_KEY_PATTERN
-      - GENESIS_DATA_MAX_SIZE
-      - GENESIS_KEYS_PER_USER
-      - GENESIS_GIN_MODE
-      - GENESIS_LOG_MODE
   frontend:
     <<: *finance-default
     container_name: ocular-frontend
-    image: ghcr.io/simonwep/ocular:v1.11.1
-    environment:
-      - OCULAR_DEMO
+    image: ghcr.io/simonwep/ocular:v1.12.0
   nginx:
     <<: *finance-default
     container_name: ocular-nginx
