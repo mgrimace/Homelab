@@ -2,7 +2,9 @@
 
 A low-power, always-on home server built around the \*arr suite and self-hosted services using Proxmox, Docker, and NAS storage.
 
->Note: This update is a major restructuring of my Docker setup, and overall simplification of my documentation. I've reorganized the docker directory structure to `/opt/homelab/[apps, books, bots, envs, finances, manga, media, networking, system, themepark, tunnels]`, with each stack containing its own docker-compose file and app-specific configs. All configuration and secrets are in `/opt/homelab/envs`. This makes the entire setup easier to backup and redeploy. I've also replaced NGINX Proxy Manager with [Pangolin](https://docs.fossorial.io/) for reverse proxy, which includes Crowdsec and identity management built-in. Previous documentation has been moved to `/docs/`.
+> [!IMPORTANT] 
+> This update is a significant restructuring of my previous Docker setup, and overall simplification of my documentation. I've reorganized the docker directory structure to `/opt/homelab/[apps, books, bots, envs, finances, manga, media, networking, system, themepark, tunnels]`, with each stack containing its own docker-compose file and app-specific configs. All configuration and secrets are in `/opt/homelab/envs`. This makes the entire setup easier to backup and redeploy. 
+> I've also replaced NGINX Proxy Manager with [Pangolin](https://docs.fossorial.io/) for reverse proxy, which includes Crowdsec and identity management built-in. Previous documentation has been moved to `/docs/`.
 
 ## Table of Contents
 
@@ -320,11 +322,31 @@ Use community helper scripts from https://community-scripts.github.io/ProxmoxVE/
 
 1. In Proxmox UI: Docker LXC → **Options** → Enable CIFS and nesting
 
->Troubleshooting: I received an error with a recent Docker update:
-   ```
-   Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: open sysctl net.ipv4.ip_unprivileged_port_start file: reopen fd 8: permission denied: unknown
-   ```
-   To fix this, in Proxmox shell: `nano /etc/pve/lxc/<CT#>.conf` (e.g., 133.conf), then add: `lxc.apparmor.profile: unconfined`, then restart the container with `pct reboot <CT#>`
+> [!WARNING]
+> Using Docker in an LXC is not technically recommended. 
+> I received an error when updating to the latest version of Docker:
+>
+> ```
+> Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: open sysctl net.ipv4.ip_unprivileged_port_start file: reopen fd 8: permission denied: unknown
+> ```
+>
+> To fix this, in Proxmox shell:
+> 
+> ```bash
+> nano /etc/pve/lxc/<CT#>.conf
+> ```
+>
+> Then add:
+>
+> ```
+> lxc.apparmor.profile: unconfined
+> ```
+>
+> Finally, restart the container:
+>
+> ```bash
+> pct reboot <CT#>
+> ```
 
 2. SSH into the container
 
@@ -381,9 +403,9 @@ sudo systemctl restart docker
    sudo nano /etc/fstab
    # Add:
    # //[OMV_IP]/data /mnt/media cifs nobrl,noperm,rw,credentials=/root/.storage_credentials,uid=1000,gid=1000,file_mode=0660,dir_mode=0770 0 0
-   
-   # Note: nobrl is required for Calibre on shared drives
    ```
+> [!CAUTION]
+> the `nobrl` flag is required for Calibre when the library is mounted on shared drives
 
 4. Test mount:
    ```bash
@@ -420,7 +442,8 @@ Use `/opt/homelab` as the base docker path, organizing services into logical sta
 │
 └── themepark/
 ```
->Note: I've separated some services into `/tunnels`, specifically for services that I prefer to use with Cloudflare Tunnels rather than Pagolin.  
+> [!NOTE] 
+> I've separated some services into `/tunnels`, specifically for services that I prefer to use with Cloudflare Tunnels rather than Pagolin.  
 
 ### Docker Network & Environment
 
@@ -428,7 +451,8 @@ Use `/opt/homelab` as the base docker path, organizing services into logical sta
    ```bash
    sudo docker network create homelab
    ```
->Note: review the compose files for other `networks` to create if you'd like to keep some services on separate docker networks (e.g., `finances`)
+> [!TIP]
+> review the compose files for other `networks` to create if you'd like to keep some services on separate docker networks (e.g., `finances`)
 
 2. Create `.env` files in `/opt/homelab/envs/`:
    - `global.env`: PID, GID, TZ (shared across all stacks)
@@ -869,10 +893,11 @@ sops --encrypt --age $(cat $SOPS_AGE_KEY_FILE |grep -oP "public key: \K(.*)") /o
 for file in /opt/homelab/envs/*.env; do [[ "$file" == *.example.env ]] && continue; sops --encrypt --age $(cat $SOPS_AGE_KEY_FILE | grep -oP "public key: \K(.*)") "$file" > "${file}.enc"; done
 ```
 
->Note: Optionally safely delete the plaintext file:
-```bash
-shred -u /opt/homelab/envs/apps.env
-```
+> [!TIP] 
+> Optionally safely delete the plaintext file:
+> ```bash
+> shred -u /opt/homelab/envs/apps.env
+> ```
 
 ### Decrypting for Use
 
