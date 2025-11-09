@@ -320,6 +320,12 @@ Use community helper scripts from https://community-scripts.github.io/ProxmoxVE/
 
 1. In Proxmox UI: Docker LXC → **Options** → Enable CIFS and nesting
 
+>Troubleshooting: I received an error with a recent Docker update:
+   ```
+   Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: open sysctl net.ipv4.ip_unprivileged_port_start file: reopen fd 8: permission denied: unknown
+   ```
+   To fix this, in Proxmox shell: `nano /etc/pve/lxc/<CT#>.conf` (e.g., 133.conf), then add: `lxc.apparmor.profile: unconfined`, then restart the container with `pct reboot <CT#>`
+
 2. SSH into the container
 
 ### Security Setup
