@@ -2,9 +2,19 @@
 
 A low-power, always-on home server built around the \*arr suite and self-hosted services using Proxmox, Docker, and NAS storage.
 
-> [!IMPORTANT] 
-> This update is a significant restructuring of my previous Docker setup, and overall simplification of my documentation. I've reorganized the docker directory structure to `/opt/homelab/[apps, books, bots, envs, finances, manga, media, networking, system, themepark, tunnels]`, with each stack containing its own docker-compose file and app-specific configs. All configuration and secrets are in `/opt/homelab/envs`. This makes the entire setup easier to backup and redeploy. 
-> I've also replaced NGINX Proxy Manager with [Pangolin](https://docs.fossorial.io/) for reverse proxy, which includes Crowdsec and identity management built-in. Previous documentation has been moved to `/docs/`.
+> [!NOTE]
+> I added two of my very own new projects to the homelab! 
+> - [Budget-Overview](https://github.com/mgrimace/budget-overview): A visual budgeting tool that shows where your money goes each month using a Sankey-style flow diagram  
+> - [Energy-Todo](https://github.com/mgrimace/energy-todo): A simple to-do list organized around energy rather than urgency
+
+> [!TIP]
+> I restructured my homelab for better simplicity and organization. 
+>
+> The Docker layout follows:`/opt/homelab/[apps, books, bots, envs, finances, manga, media, networking, system, themepark, tunnels]`.
+> Each stack contains its own `compose.yaml` and app-specific configuration, while shared environment variables and secrets live in `/opt/homelab/envs`.  
+>
+> I replaced NGINX Proxy Managerwith [Pangolin](https://docs.fossorial.io/).  
+> Previous documentation is archived in `/docs/`.
 
 ## Table of Contents
 

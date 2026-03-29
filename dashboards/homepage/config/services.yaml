@@ -23,27 +23,27 @@
             key: {{HOMEPAGE_VAR_OVERSEER_KEY}}
             fields: ["pending", "processing", "available"]
 - Apps:
-    - Jotty (Notes, To-Do):
-        icon: sh-jotty
-        href: http://{{HOMEPAGE_VAR_SERVER_IP}}:1122/checklist/inbox
-        server: my-docker
-        container: jotty
-        widget:
-          type: customapi
-          url: http://{{HOMEPAGE_VAR_SERVER_IP}}:1122/api/summary
-          method: GET
-          headers:
-            x-api-key: {{HOMEPAGE_VAR_JOTTY_API}}
-          mappings:
+#    - Jotty (Notes, To-Do):
+#        icon: sh-jotty
+#        href: http://{{HOMEPAGE_VAR_SERVER_IP}}:1122/checklist/inbox
+#        server: my-docker
+#        container: jotty
+#        widget:
+#          type: customapi
+#          url: http://{{HOMEPAGE_VAR_SERVER_IP}}:1122/api/summary
+#          method: GET
+#          headers:
+#            x-api-key: {{HOMEPAGE_VAR_JOTTY_API}}
+#          mappings:
             #  - field: "summary.tasks.inProgress"
             #    label: "In Progress"
             #    format: number
             #  - field: "summary.checklists.total"
             #    label: "Checklists"
             #    format: number
-              - field: "summary.notes.total"
-                label: "Notes"
-                format: number
+#              - field: "summary.notes.total"
+#                label: "Notes"
+#                format: number
             #  - field: "summary.username"
             #    label: "User"
             #    format: text
@@ -59,16 +59,16 @@
             #  - field: "summary.checklists.types.task"
             #    label: "Task Lists"
             #    format: number
-              - field: "summary.items.total"
-                label: "Total Items"
-                format: number
-              - field: "summary.items.completed"
-                label: "Completed Items"
-                format: number
-              - field: "summary.items.completionRate"
-                label: "Item Completion"
-                format: number
-                suffix: "%"
+#              - field: "summary.items.total"
+#                label: "Total Items"
+#                format: number
+#              - field: "summary.items.completed"
+#                label: "Completed Items"
+#                format: number
+#              - field: "summary.items.completionRate"
+#                label: "Item Completion"
+#                format: number
+#                suffix: "%"
             #  - field: "summary.tasks.total"
             #    label: "Total Tasks"
             #    format: number
@@ -82,23 +82,25 @@
               #  label: "Task Completion"
               #  format: number
               #  suffix: "%"
-    #- To-Do:
-    #    icon: vikunja
-    #    href: https://todo.{{HOMEPAGE_ VAR_DOMAIN}}
-    #    server: my-docker
-    #    container: vikunja
-    #    widget:
-    #        type: vikunja
-    #        url: https://todo.{{HOMEPAGE_VAR_DOMAIN}}
-    #        key: {{HOMEPAGE_VAR_VIKUNJA_API}}
-    #        enableTaskList: false
-    #        fields: ["projects", "tasks7d", "tasksOverdue"]
     - Notes:
         icon: flatnotes
         href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8383
         server: my-docker
         container: flatnotes   
-
+    - Todo:
+        icon: https://raw.githubusercontent.com/mgrimace/energy-todo/558bb990e73d0906c0672194ea0ad96c39477e8e/frontend/public/icons/icon-dark-transparent.svg
+        href: http://{{HOMEPAGE_VAR_SERVER_IP}}:1133
+        server: my-docker
+        container: energy-todo   
+    - Termix:
+        icon: sh-termix
+        href: http://{{HOMEPAGE_VAR_TERMIX_IP}}
+        siteMonitor: http://{{HOMEPAGE_VAR_TERMIX_IP}}
+    - Nametag:
+        icon: sh-nametag
+        href: http://{{HOMEPAGE_VAR_SERVER_IP}}:3030
+        server: my-docker
+        container: nametag
 - Downloads:
     - qBittorrent:
         icon: sh-qbittorrent
@@ -162,6 +164,12 @@
                 type: suwayomi
                 url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5678
                 fields: ["download", "read", "unread"]
+    - Misc:
+        - Pinepods:
+            icon: pinepods
+            href: https://pods.{{HOMEPAGE_VAR_DOMAIN}}
+            server: docker-oracle
+            container: pinepods
 
 - Tracking:
     - Television:
@@ -226,84 +234,91 @@
                 url: http://{{HOMEPAGE_VAR_SERVER_IP}}:7879
                 key: {{HOMEPAGE_VAR_RADARR_4K_KEY}}
                 fields: ["wanted", "missing", "movies"]
-    - Jelly:
-        - Jellyfin:
-            icon: jellyfin
-            href: http://{{HOMEPAGE_VAR_JELLYFIN_IP}}:8096
-            siteMonitor: http://{{HOMEPAGE_VAR_JELLYFIN_IP}}:8096
-            widget:
-                type: jellyfin
-                url: http://{{HOMEPAGE_VAR_JELLYFIN_IP}}:8096
-                key: {{HOMEPAGE_VAR_JELLYFIN_API}}
-                enableBlocks: true # optional, defaults to false
-                enableNowPlaying: true # optional, defaults to true
-                enableUser: true # optional, defaults to false
-                showEpisodeNumber: true # optional, defaults to false
-                expandOneStreamToTwoRows: false # optional, defaults to true
-                fields: ["movies", "series", "episodes"]
-        - Jellyserr:
-            icon: jellyseerr
-            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:5056
-            server: my-docker
-            container: jellyseerr
-            widget:
-                type: jellyseerr
-                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5056
-                key: {{HOMEPAGE_VAR_JELLYSEERR_API}}
-        - Watcharr:
-            icon: sh-watcharr
-            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:3080
-            server: my-docker
-            container: watcharr    
-    - Reading:
-        - Calibre:
-            icon: sh-calibre
-            href: https://calibre.{{HOMEPAGE_VAR_LOCAL}}
-            server: my-docker
-            container: calibre   
-        - Book Manager:
-                icon: calibre-web-automated-book-downloader
-                href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8084
+    - Arr Support:
+        - Sync:
+            - Prowlarr:
+                icon: sh-prowlarr
+                href: http://{{HOMEPAGE_VAR_SERVER_IP}}:9696
                 server: my-docker
-                container: calibre-web-automated-book-downloader
-        - Book Manager Kids:
-            icon: calibre-web-automated-book-downloader
-            href: https://bookmanagement.{{HOMEPAGE_VAR_DOMAIN}}
-            server: docker-oracle
-            container: cwa-book-downloader    
-
-- Arr Support:
-    - Sync:
-        - Prowlarr:
-            icon: sh-prowlarr
-            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:9696
-            server: my-docker
-            container: prowlarr
-            #widget:
-                #type: prowlarr
-                #url: http://{{HOMEPAGE_VAR_SERVER_IP}}:9696
-                #key: {{HOMEPAGE_VAR_PROWLARR_KEY}}
-                #fields: ["numberOfGrabs", "numberOfQueries", "numberOfFailGrabs"]
-        - Plex Trakt Sync:
-            icon: sh-trakt
-            server: my-docker
-            container: plextraktsync
-    - Background:
-        - Recyclarr:
-            icon: trash-guides
-            server: my-docker
-            container: recyclarr
-        - Unpackerr:
-            icon: sh-unpackerr
-            server: my-docker
-            container: unpackerr
-    - Monitoring:
-        - Tautulli:
-            icon: sh-tautulli
-            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8181
-            server: my-docker
-            container: tautulli
-
+                container: prowlarr
+                #widget:
+                    #type: prowlarr
+                    #url: http://{{HOMEPAGE_VAR_SERVER_IP}}:9696
+                    #key: {{HOMEPAGE_VAR_PROWLARR_KEY}}
+                    #fields: ["numberOfGrabs", "numberOfQueries", "numberOfFailGrabs"]
+            - Plex Trakt Sync:
+                icon: sh-trakt
+                server: my-docker
+                container: plextraktsync
+        - Background:
+            - Recyclarr:
+                icon: trash-guides
+                server: my-docker
+                container: recyclarr
+            - Unpackerr:
+                icon: sh-unpackerr
+                server: my-docker
+                container: unpackerr
+        - Monitoring:
+            - Tautulli:
+                icon: sh-tautulli
+                href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8181
+                server: my-docker
+                container: tautulli
+            - Watcharr:
+                icon: sh-watcharr
+                href: http://{{HOMEPAGE_VAR_SERVER_IP}}:3080
+                server: my-docker
+                container: watcharr
+    - Reading:
+        #- Calibre:
+        #    icon: sh-calibre
+        #    href: https://calibre.{{HOMEPAGE_VAR_LOCAL}}
+        #    server: my-docker
+        #    container: calibre   
+        - Book Managers:
+          - Shelfmark:
+                  icon: sh-shelfmark
+                  href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8084
+                  server: my-docker
+                  container: shelfmark
+          - Shelfmark Kids:
+              icon: sh-shelfmark
+              href: https://bookmanagement.{{HOMEPAGE_VAR_DOMAIN}}
+              server: docker-oracle
+              container: shelfmark 
+        - Bookmarks:
+           - Z-Lib:
+               icon: https://1lib.sk/favicon.svg
+               href: https://1lib.sk/
+           - Mobilism:
+               icon: sh-miles-and-more
+               href: https://forum.mobilism.org/index.php
+- Jelly:
+    - Jellyfin:
+        icon: jellyfin
+        href: http://{{HOMEPAGE_VAR_JELLYFIN_IP}}:8096
+        siteMonitor: http://{{HOMEPAGE_VAR_JELLYFIN_IP}}:8096
+        widget:
+            type: jellyfin
+            url: http://{{HOMEPAGE_VAR_JELLYFIN_IP}}:8096
+            key: {{HOMEPAGE_VAR_JELLYFIN_API}}
+            enableBlocks: true # optional, defaults to false
+            enableNowPlaying: true # optional, defaults to true
+            enableUser: true # optional, defaults to false
+            showEpisodeNumber: true # optional, defaults to false
+            expandOneStreamToTwoRows: false # optional, defaults to true
+            fields: ["movies", "series", "episodes"]
+    - Jellyserr:
+        icon: jellyseerr
+        href: http://{{HOMEPAGE_VAR_SERVER_IP}}:5056
+        server: my-docker
+        container: jellyseerr
+        widget:
+            type: jellyseerr
+            url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5056
+            key: {{HOMEPAGE_VAR_JELLYSEERR_API}}
+            
 - Applications:
     - Household:
         - Mealie:
@@ -322,28 +337,21 @@
             href: https://vault.{{HOMEPAGE_VAR_DOMAIN}}
             siteMonitor: https://vault.{{HOMEPAGE_VAR_DOMAIN}}
     - Finances:
-        - Shopping:
-            - ChangeDetection:
-                icon: sh-changedetection
-                href: http://{{HOMEPAGE_VAR_SERVER_IP}}:5000
-                server: my-docker
-                container: changedetection
-                widget:
-                    type: changedetectionio
-                    url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5000
-                    key: {{HOMEPAGE_VAR_CHANGE_KEY}}
-                    fields: ["diffsDetected"]
-        - Budgeting:
-            - Budget:
-                icon: ocular
-                href: https://budget.{{HOMEPAGE_VAR_DOMAIN}}
-                server: my-docker
-                container: ocular-nginx
-            - Subscriptions:
-                icon: sh-wallos
-                href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8282
-                server: my-docker
-                container: wallos
+        - ChangeDetection:
+            icon: sh-changedetection
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:5000
+            server: my-docker
+            container: changedetection
+            widget:
+                type: changedetectionio
+                url: http://{{HOMEPAGE_VAR_SERVER_IP}}:5000
+                key: {{HOMEPAGE_VAR_CHANGE_KEY}}
+                fields: ["diffsDetected"]
+        - Budget-Overview:
+            icon: https://raw.githubusercontent.com/mgrimace/budget-overview/refs/heads/main/frontend/public/icon-512.png
+            href: http://{{HOMEPAGE_VAR_SERVER_IP}}:3002
+            server: my-docker
+            container: budget-overview
 
     - Coding:
         - Forgejo:
@@ -360,11 +368,6 @@
             href: http://{{HOMEPAGE_VAR_SERVER_IP}}:8088
             server: my-docker
             container: glance
-        - Code:
-            icon: code-server
-            href: https://code.{{HOMEPAGE_VAR_DOMAIN}}
-            server: my-docker
-            container: code-server
         - Folding:
             icon: foldingathome.png
             href: https://foldingathome.{{HOMEPAGE_VAR_DOMAIN}}
@@ -385,7 +388,7 @@
             #      - field: score
             #        label: score
             #        format: number
-
+            
 - Automation:    
     - Home:
         - Homebridge:
@@ -438,7 +441,7 @@
             href: https://github.com/TheNetsky/Microsoft-Rewards-Script
             icon: sh-microsoft-bing
             server: docker-scripts
-            container: netsky
+            container: rewards
         - iSponsorBlockTV:
             icon: sh-youtube
             server: my-docker
@@ -531,12 +534,12 @@
               #     data: mem_usage
               #  label: RAM/24GB
               #  format: text       
-    - Minecraft (port 25565):
-        icon: sh-minecraft
-        href: https://crafty.{{HOMEPAGE_VAR_DOMAIN}}:8443
-        widget:
-            type: minecraft
-            url: udp://{{HOMEPAGE_VAR_ORACLE_IP}}:25565
+    #- Minecraft (port 25565):
+    #    icon: sh-minecraft
+    #    href: https://crafty.{{HOMEPAGE_VAR_DOMAIN}}:8443
+    #    widget:
+    #        type: minecraft
+    #        url: udp://{{HOMEPAGE_VAR_ORACLE_IP}}:25565
     - Creative (port 19132):
         icon: sh-minecraft
         href: https://crafty.{{HOMEPAGE_VAR_DOMAIN}}:8443
@@ -571,6 +574,11 @@
             icon: si-intel
             href: http://{{HOMEPAGE_VAR_PROXMOX_IP}}:16992
     - Docker:
+        #- Tugtainer:
+        #    icon: tugtainer
+        #    href: http://{{HOMEPAGE_VAR_SERVER_IP}}:9412
+        #    server: my-docker
+        #    container: tugtainer
         - Watchtower:
             icon: sh-watchtower
             server: my-docker
@@ -631,6 +639,11 @@
             href: https://pangolin.{{HOMEPAGE_VAR_DOMAIN}}
             server: docker-oracle
             container: pangolin
+            widget:
+               type: pangolin
+               url: https://api.{{HOMEPAGE_VAR_DOMAIN}}
+               key: {{HOMEPAGE_VAR_PANGOLIN_API}}
+               org: {{HOMEPAGE_VAR_PANGOLIN_ORG}}            
     - Ad-blocking:
         - Pi-Hole (RPi):
             icon: sh-pi-hole

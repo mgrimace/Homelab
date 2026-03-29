@@ -27,7 +27,7 @@ layout:
   Apps:
     tab: Main
   Downloads:
-    tab: Main 
+    tab: Main
   Libraries:
     #icon: mdi-library
     tab: Main
@@ -38,11 +38,50 @@ layout:
     tab: Tracking
     header: false
     style: row
-    columns: 4
-  Arr Support:
+    columns: 2
+    Television:
+      tab: Tracking 
+      style: row
+      columns: 3
+        #header: false
+    Movies:
+      tab: Tracking
+      style: row
+      columns: 3
+       # header: false
+    Arr Support:
+      #tab: Tracking
+      style: row
+      columns: 3
+      Sync:
+        #style: row
+        #columns: 2
+        header: false
+      Background:
+        #style: row
+        #columns: 2
+        header: false
+      Monitoring:
+        #style: row
+        #columns: 2
+        header: false
+    Reading:
+      style: row
+      columns: 3
+      #header: false
+      Book Managers:
+        header: false
+        #style: row
+        #columns: 2
+      Bookmarks:
+        header: false
+        #style: row
+        #columns: 2
+  Jelly:
     tab: Tracking
     style: row
-    columns: 3
+    columns: 4
+    #header: false
 ## Tab - Apps
   Applications:
     tab: Apps
@@ -50,12 +89,6 @@ layout:
     columns: 3
     header: false
     Finances:
-      style: row
-      columns: 2
-      Shopping:
-        header: false
-      Budgeting:
-        header: false
     Coding:
       style: row
       columns: 3
@@ -73,7 +106,7 @@ layout:
   Minecraft:
     tab: Apps
     style: row
-    columns: 4
+    columns: 3
 
 ## Tab - System
   Server:

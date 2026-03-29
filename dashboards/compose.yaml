@@ -1,0 +1,70 @@
+name: "dashboards"
+
+# ===== THIS COMPOSE FILE =====
+# Services included:
+#   - Glance
+#   - Homepage
+
+# == ANCHORS ==
+# These anchors define baseline configuration applied to most containers.
+# Default behavior:
+#   - Include all entries under '&homelab-default' via <<: *homelab-default
+#   - Additional labels can be added per container using <<: *labels
+
+x-app: &homelab-default 
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges=true
+  networks:
+    - homelab
+  labels: &labels
+    com.centurylinklabs.watchtower.enable: "true"
+  env_file: &env-files
+    - ../envs/global.env
+    - ../envs/dashboards.env
+
+services:
+
+  glance:
+    <<: *homelab-default
+    image: glanceapp/glance
+    container_name: glance
+    volumes:
+      - ./glance:/app/config
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /mnt/media/backups:/mnt/media:ro
+    ports:
+      - 8088:8080
+
+  homepage:
+    # description: my preferred dashboard, available at IP:3000
+    <<: *homelab-default
+    image: ghcr.io/gethomepage/homepage:dev
+    container_name: homepage
+    ports:
+      - 3000:3000
+    volumes:
+      - ./homepage/config:/app/config
+      - ./homepage/images:/app/public/images
+
+ # jotty:
+ #   <<: *homelab-default
+ #   image: ghcr.io/fccview/jotty:develop
+ #   container_name: jotty
+ #   user: "1000:1000"
+ #   ports:
+ #     - "1122:3000"
+ #   volumes:
+ #     - ./jotty/data:/app/data:rw
+ #     - ./jotty/config:/app/config:rw
+ #     - ./jotty/cache:/app/.next/cache:rw
+ #   environment:
+ #     - NODE_ENV=production
+
+### NETWORKS
+networks:
+  homelab:
+    driver: bridge
+    external: true

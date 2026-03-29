@@ -28,15 +28,15 @@
 #    label: homelab
 - glances:
     version: 4
-    url: http://{{HOMEPAGE_VAR_ORACLE_IP}}:61208
+    url: https://glances.{{HOMEPAGE_VAR_DOMAIN}}
     username: {{HOMEPAGE_VAR_GLANCES_ORACLE_USER}}
     password: {{HOMEPAGE_VAR_GLANCES_ORACLE_PASS}}
     href: https://www.oracle.com/cloud/sign-in.html
-    mem: true
+    mem: false
     #uptime: true
     label: oracle
 - glances:
-    url: http://{{HOMEPAGE_VAR_ORACLE_IP}}:61208
+    url: https://glances.{{HOMEPAGE_VAR_DOMAIN}}
     username: {{HOMEPAGE_VAR_GLANCES_ORACLE_USER}}
     password: {{HOMEPAGE_VAR_GLANCES_ORACLE_PASS}}
     href: https://www.oracle.com/cloud/sign-in.html
@@ -45,7 +45,7 @@
     mem: false
     cputemp: false
     uptime: false
-    disk: /
+    disk: /mnt/host
     #expanded: true
     label: Oracle
 - glances:

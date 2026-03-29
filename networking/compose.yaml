@@ -49,7 +49,7 @@ services:
     volumes:
       - ./npm/data:/data
       - ./npm/letsencrypt:/etc/letsencrypt
-      - ../themepark/98-themepark-nginx-proxy-manager:/etc/cont-init.d/98-themepark/ #this must be manually added, see download script
+      #- ../themepark/98-themepark-nginx-proxy-manager:/etc/cont-init.d/98-themepark/ #this must be manually added, see download script
 
 #### NETWORKS
 networks:

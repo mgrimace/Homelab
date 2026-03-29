@@ -32,18 +32,36 @@
 # -----------------------------
 # Homepage config & images
 # -----------------------------
-!**/apps/homepage/
-!**/apps/homepage/config/
-!**/apps/homepage/config/services.yaml
-!**/apps/homepage/config/settings.yaml
-!**/apps/homepage/config/widgets.yaml
-!**/apps/homepage/images/background.jpg
+!**/dashboards/homepage/
+!**/dashboards/homepage/config/
+!**/dashboards/homepage/config/services.yaml
+!**/dashboards/homepage/config/settings.yaml
+!**/dashboards/homepage/config/widgets.yaml
+!**/dashboards/homepage/images/background.jpg
+
+# -----------------------------
+# Glance config
+# -----------------------------
+!**/dashboards/glance/glance.yml
 
 # -----------------------------
 # Recyclarr config
 # -----------------------------
-!**/media/recyclarr/config/recyclarr.yml
+
+# Recyclarr config (keep only main config)
+!media/recyclarr/
+!media/recyclarr/config/
+!media/recyclarr/config/recyclarr.yml
+
+# Ignore everything else in recyclarr config
+media/recyclarr/config/*
+!media/recyclarr/config/recyclarr.yml
+
+# Explicitly ignore runtime + repos
+media/recyclarr/config/cache/
+media/recyclarr/config/logs/
 media/recyclarr/config/repositories/
+media/recyclarr/config/resources/**/git/**
 
 # -----------------------------
 # Ignore sensitive data everywhere
@@ -82,3 +100,10 @@ tunnels/linkstack/
 apps/code-server/config/extensions/
 !networking/compose.yaml
 !bots/compose.yaml
+apps/*/postgres_data/
+
+# -----------------------------
+# Remove old apps/dashboard
+# -----------------------------
+apps/homepage/
+apps/glance

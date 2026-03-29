@@ -2,8 +2,7 @@ name: "finances"
 
 # ===== THIS COMPOSE FILE =====
 # Services included:
-#   - ocular
-#   - wallos
+#   - budget-overview
 
 # == ANCHORS ==
 # These anchors define baseline configuration applied to most containers.
@@ -11,7 +10,7 @@ name: "finances"
 #   - Include all entries under '&finance-default' via <<: *finance-default
 #   - Additional labels can be added per container using <<: *labels
 
-x-app: &finance-default 
+x-app: &finance-default
   restart: unless-stopped
   security_opt:
     - no-new-privileges=true
@@ -24,41 +23,19 @@ x-app: &finance-default
     - ../envs/finances.env
 
 services:
-  ##Ocular
-  #Description: https://github.com/simonwep/ocular-docker
-  backend:
-    <<: *finance-default
-    image: ghcr.io/simonwep/genesis:v1.4.1
-    container_name: ocular-backend
-    volumes:
-      - ./ocular/data:/app/.data
-    command: start
-  frontend:
-    <<: *finance-default
-    container_name: ocular-frontend
-    image: ghcr.io/simonwep/ocular:v1.12.0
-  nginx:
-    <<: *finance-default
-    container_name: ocular-nginx
-    image: nginx:1.26-alpine
-    ports:
-      - "3030:80"
-    volumes:
-      - ./ocular/config/nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - backend
-      - frontend
 
-  wallos:
-    #description: subscription manager useful for tracking recurring bills and payments
+  budget-overview:
+    #description: https://github.com/mgrimace/budget-overview
     <<: *finance-default
-    container_name: wallos
-    image: bellamy/wallos:latest
+    container_name: budget-overview
+    image: ghcr.io/mgrimace/budget-overview:latest
     ports:
-      - 8282:80/tcp
+      - "3002:3001"
     volumes:
-      - ./wallos/db:/var/www/html/db
-      - ./wallos/logos:/var/www/html/images/uploads/logos
+      - ./budget-overview:/app/data
+    environment:
+      DATABASE_PATH: /app/data/budget.db
+
 
 ### NETWORKS
 networks:

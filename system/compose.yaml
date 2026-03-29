@@ -1,5 +1,4 @@
-name: "system"
-
+name: system
 # ===== THIS COMPOSE FILE =====
 # Services included:
 # - Dockerproxy
@@ -15,7 +14,7 @@ name: "system"
 #   - Include all entries under '&homelab-default' via <<: *homelab-default
 #   - Additional labels can be added per container using <<: *labels
 
-x-app: &homelab-default 
+x-app: &a1
   restart: unless-stopped
   security_opt:
     - no-new-privileges=true
@@ -24,32 +23,31 @@ x-app: &homelab-default
     - skynet
     - homefinance
     - tunnels
-  labels: &labels
+  labels:
     com.centurylinklabs.watchtower.enable: "true"
-  env_file: &env-files
+  env_file:
     - ../envs/global.env
     - ../envs/system.env
-
 services:
-
   dockerproxy:
-    # description: proxy for docker
-    <<: *homelab-default
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    <<: *a1
+    image: lscr.io/linuxserver/socket-proxy:latest
     container_name: dockerproxy
-    ports:
-      - 127.0.0.1:2375:2375
     environment:
-      CONTAINERS: 1 # Allow access to viewing containers
-      SERVICES: 1 # Allow access to viewing services (necessary when using Docker Swarm)
-      TASKS: 1 # Allow access to viewing tasks (necessary when using Docker Swarm)
-      POST: 0 # Disallow any POST operations (effectively read-only)
+      CONTAINERS: 1
+      SERVICES: 1
+      TASKS: 1
+      POST: 0
+      INFO: 1
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
-
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    read_only: true
+    tmpfs:
+      - /run
+    ports:
+      - 2375:2375
   dockge:
-    # description: compose manager/creator
-    <<: *homelab-default
+    <<: *a1
     container_name: dockge
     image: louislam/dockge:1
     ports:
@@ -60,20 +58,16 @@ services:
       - /opt/homelab:/opt/homelab
     environment:
       DOCKGE_STACKS_DIR: /opt/homelab
-
   dozzle:
-    # description: https://github.com/amir20/dozzle
-    <<: *homelab-default
+    <<: *a1
     container_name: dozzle
     image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 9991:8080
-
   ntfy:
-    #description: notification service used by containers
-    <<: *homelab-default
+    <<: *a1
     image: binwiederhier/ntfy
     container_name: ntfy
     command:
@@ -86,50 +80,41 @@ services:
       NTFY_BEHIND_PROXY: true
       NTFY_ATTACHMENT_CACHE_DIR: /var/lib/ntfy/attachments
       NTFY_ENABLE_LOGIN: true
-      #NTFY_BASE_URL: ${NTFY_BASE_URL}
-      #NTFY_LOG_LEVEL: debug
-      #NTFY_VISITOR_REQUEST_LIMIT_EXEMPT_HOSTS: 
     volumes:
       - ./ntfy/var/cache/ntfy:/var/cache/ntfy
       - ./ntfy/etc/ntfy:/etc/ntfy
       - ./ntfy:/var/lib/ntfy
     ports:
-      - 8150:80  
-
-  uptime-kuma:
-    #description: monitor docker and service uptime
-    <<: *homelab-default
-    container_name: uptime-kuma
-    image: louislam/uptime-kuma:1
-    volumes:
-      - ./uptime-kuma/data:/app/data
-    ports:
-      - 3001:3001
-
+      - 8150:80
   watchtower:
-    # description: automatically update containers
-    <<: *homelab-default
-    image: containrrr/watchtower
+    <<: *a1
+    image: nickfedor/watchtower
     container_name: watchtower
     environment:
       WATCHTOWER_CLEANUP: "true"
       WATCHTOWER_LABEL_ENABLE: "true"
       WATCHTOWER_INCLUDE_RESTARTING: "true"
       WATCHTOWER_INCLUDE_STOPPED: "true"
-      WATCHTOWER_SCHEDULE: "0 0 3 * * *"
+      WATCHTOWER_SCHEDULE: 0 0 3 * * *
       WATCHTOWER_TIMEOUT: "30"
       WATCHTOWER_HTTP_API_UPDATE: "true"
       WATCHTOWER_HTTP_API_METRICS: "true"
-      #WATCHTOWER_HTTP_API_TOKEN: "${WATCHTOWER_HTTP_API_TOKEN}"
       WATCHTOWER_HTTP_API_PERIODIC_POLLS: "true"
-      WATCHTOWER_NOTIFICATIONS: "shoutrrr"
+      WATCHTOWER_NOTIFICATIONS: shoutrrr
       WATCHTOWER_NOTIFICATION_SKIP_TITLE: "True"
-      #WATCHTOWER_NOTIFICATION_URL: "${WATCHTOWER_NTFY_URL}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 8090:8080
-
+    
+  uptime-kuma:
+    <<: *a1
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:2
+    volumes:
+      - ./uptime-kuma/data:/app/data
+    ports:
+      - 3001:3001
 networks:
   homelab:
     driver: bridge

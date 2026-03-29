@@ -2,11 +2,10 @@ name: "apps"
 
 # ===== THIS COMPOSE FILE =====
 # Services included:
-#   - Code-server
-#   - Glance
-#   - Homepage
+#   - Energy-Todo
+#   - Jotty
 #   - Mealie
-#   - Vikunja
+#   - Nametag
 #   - Flatnotes
 #   - Traktor
 
@@ -29,71 +28,64 @@ x-app: &homelab-default
     - ../envs/apps.env
 
 services:
-
-  code-server:
+  
+  energy-todo:
     <<: *homelab-default
-    #description: https://docs.linuxserver.io/images/docker-code-server/
-    image: lscr.io/linuxserver/code-server:latest
-    container_name: code-server
+    image: ghcr.io/mgrimace/energy-todo:latest
+    container_name: energy-todo
+    ports:
+      - 1133:3000   # keep same port dumbdo used (optional)
+    volumes:
+      - ./energy-todo/data:/app/data:rw
     environment:
-      DEFAULT_WORKSPACE: /appdata #optional
-    volumes:
-      - ./code-server/config:/config
-      - ../:/appdata
-      - ../:/compose
-    ports:
-      - 8443:8443
+      RUST_LOG: ${RUST_LOG:-info}
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+      - /run:rw,noexec,nosuid,size=16m
+  
+#  dumbdo:
+#    <<: *homelab-default
+    #description: https://github.com/DumbWareio/DumbDo
+#    image: dumbwareio/dumbdo:latest
+#    container_name: dumbdo
+#    ports:
+#      - 1133:3000
+#    volumes:
+#      - ./dumbdo/data:/app/data
+#    environment:
+#      - DUMBDO_SITE_TITLE=ToDo
+      # (Optional) Restrict origins - ex: https://subdomain.domain.tld,https://auth.proxy.tld,http://internalip:port' (default is '*')
+      # - ALLOWED_ORIGINS=http://localhost:3000
+      # - NODE_ENV=development # default production (development allows all origins)
+    #healthcheck:
+    #  test: wget --spider -q  http://127.0.0.1:3000
+    #  start_period: 20s
+    #  interval: 20s
+    #  timeout: 5s
+    #  retries: 3
 
-  glance:
-    <<: *homelab-default
-    image: glanceapp/glance
-    container_name: glance
-    volumes:
-      - ./glance:/app/config
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /mnt/media/backups:/mnt/media:ro
-    env_file:
-      - ../envs/global.env
-      - ../envs/apps.env
-      - ../envs/dashboards.env
-    ports:
-      - 8088:8080
-
-  homepage:
-    # description: my preferred dashboard, available at IP:3000
-    <<: *homelab-default
-    image: ghcr.io/gethomepage/homepage:main
-    container_name: homepage
-    ports:
-      - 3000:3000
-    volumes:
-      - ./homepage/config:/app/config
-      - ./homepage/images:/app/public/images
-    env_file:
-      - ../envs/global.env
-      - ../envs/apps.env
-      - ../envs/dashboards.env
-
-  jotty:
-    <<: *homelab-default
-    image: ghcr.io/fccview/jotty:develop
-    container_name: jotty
-    user: "1000:1000"
-    ports:
-      - "1122:3000"
-    volumes:
-      - ./jotty/data:/app/data:rw
-      - ./jotty/config:/app/config:ro
-      - ./jotty/cache:/app/.next/cache:rw
-    environment:
-      - NODE_ENV=production
+ # jotty:
+ #   <<: *homelab-default
+ #   image: ghcr.io/fccview/jotty:develop
+ #   container_name: jotty
+ #   user: "1000:1000"
+ #   ports:
+ #     - "1122:3000"
+ #   volumes:
+ #     - ./jotty/data:/app/data:rw
+ #     - ./jotty/config:/app/config:rw
+ #     - ./jotty/cache:/app/.next/cache:rw
+ #   environment:
+ #     - NODE_ENV=production
             
   mealie:
     <<: *homelab-default
     #description: recipe manager
-    image: ghcr.io/mealie-recipes/mealie:nightly
+    image: ghcr.io/mealie-recipes/mealie:latest
     container_name: mealie
     ports:
       - 9925:9000
@@ -117,19 +109,36 @@ services:
       #SMTP_USER: "${SMTP_USER}"
       #SMTP_PASSWORD: "${SMTP_PASSWORD}"
 
-  #vikunja:
-  #  <<: *homelab-default
-  #  image: vikunja/vikunja
-  #  container_name: vikunja
-  #  environment:
-  #    VIKUNJA_DATABASE_PATH: /db/vikunja.db
-  #  ports:
-  #    - 3456:3456
-  #  volumes:
-  #    - ./vikunja/files:/app/vikunja/files
-  #    - ./vikunja/db:/db
-  #  restart: unless-stopped
-  
+  nametag-db:
+    <<: *homelab-default
+    image: postgres:16-alpine
+    container_name: nametag-db
+    volumes:
+      - ./nametag/postgres_data:/var/lib/postgresql/data
+    # All environment vars loaded from apps.env
+
+  nametag:
+    <<: *homelab-default
+    image: ghcr.io/mattogodoy/nametag:latest
+    container_name: nametag
+    ports:
+      - "3030:3000"
+    depends_on:
+      - nametag-db
+
+  nametag-cron:
+    <<: *homelab-default
+    image: alpine:3.19
+    container_name: nametag-cron
+    command: >
+      sh -c "
+        echo '0 8 * * * wget -q -O - --header=\"Authorization: Bearer '\"$$CRON_SECRET\"'\" http://nametag:3000/api/cron/send-reminders > /proc/1/fd/1 2>&1' > /etc/crontabs/root &&
+        echo '0 3 * * * wget -q -O - --header=\"Authorization: Bearer '\"$$CRON_SECRET\"'\" http://nametag:3000/api/cron/purge-deleted > /proc/1/fd/1 2>&1' >> /etc/crontabs/root &&
+        crond -f -l 2
+      "
+    depends_on:
+      - nametag
+
   flatnotes:
     <<: *homelab-default
     container_name: flatnotes
